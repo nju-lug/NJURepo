@@ -1,0 +1,15 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{devtools}[2019/1/21 Standard LaTeX package]
+
+\newcommand{\setvar}[2]{
+	\newcommand{#1}{}
+	\newcommand{#2}[1]{\renewcommand{#1}{##1}}
+}
+
+\newcommand{\ifemptyelse}[3]{
+    \if\relax\detokenize{#1}\relax
+        #2
+    \else
+        #3
+    \fi
+}
