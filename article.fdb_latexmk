@@ -1,12 +1,12 @@
 # Fdb version 3
-["xdvipdfmx"] 1548423479 "article.xdv" "article.pdf" "article" 1548423480
-  "article.xdv" 1548423479 81944 ec68a0d692feaca31b8eb47a2385f74a "xelatex"
+["xdvipdfmx"] 1548423711 "article.xdv" "article.pdf" "article" 1548423711
+  "article.xdv" 1548423710 81944 8fc683fbe89533ad3ba39e87f6317ac1 "xelatex"
   (generated)
   "article.pdf"
-["xelatex"] 1548423477 "article.tex" "article.xdv" "article" 1548423480
+["xelatex"] 1548423708 "article.tex" "article.xdv" "article" 1548423711
   "/Library/Fonts/Songti.ttc" 1534550211 66933252 bc432ad7628283e59cc866a2cb6e3437 ""
   "/System/Library/Fonts/PingFang.ttc" 1534550212 80005872 c5152dd6f256595adcf0200e1d4adc10 ""
-  "/dev/null" 1548423474 0 d41d8cd98f00b204e9800998ecf8427e ""
+  "/dev/null" 1548423705 0 d41d8cd98f00b204e9800998ecf8427e ""
   "/usr/local/texlive/2018/texmf-dist/fonts/map/fontname/texfonts.map" 1511824771 3332 103109f5612ad95229751940c61aada0 ""
   "/usr/local/texlive/2018/texmf-dist/fonts/tfm/adobe/zapfding/pzdr.tfm" 1480098689 1528 f853c4d1b4e0550255e02831fdc8496f ""
   "/usr/local/texlive/2018/texmf-dist/fonts/tfm/public/cm/cmmi12.tfm" 1136768653 1524 4414a8315f39513458b80dfc63bff03a ""
@@ -115,14 +115,14 @@
   "/usr/local/texlive/2018/texmf-dist/web2c/texmf.cnf" 1544742277 35176 ce7fee66be1fb01dfc6b702a7dbfa0ea ""
   "/usr/local/texlive/2018/texmf-var/web2c/xetex/xelatex.fmt" 1547282170 3737827 d555535e8cd9143106dad9d473c5c057 ""
   "/usr/local/texlive/2018/texmf.cnf" 1523934483 577 0b39adfd7c93507ff20c9c14c2f1a33f ""
-  "article.aux" 1548423479 855 dcd2dec2652f59de0d5c674f2f7fcaad ""
-  "article.out" 1548423479 241 e9d830ce607ef983224aa553de06637d ""
+  "article.aux" 1548423710 855 dcd2dec2652f59de0d5c674f2f7fcaad ""
+  "article.out" 1548423710 241 e9d830ce607ef983224aa553de06637d ""
   "article.tex" 1548423359 8851 14074d058f22963ca9e85f7fd8893b61 ""
-  "njurepo.cfg" 1548423471 3594 4f48161384d76315ea8a34e50c9b1473 ""
-  "njurepo.cls" 1548423471 15643 8b093d5b77c68386fa76322b60aa6b67 ""
+  "njurepo.cfg" 1548423706 3594 4f48161384d76315ea8a34e50c9b1473 ""
+  "njurepo.cls" 1548423706 15643 8b093d5b77c68386fa76322b60aa6b67 ""
   (generated)
-  "article.xdv"
-  "article.log"
-  "article.thm"
-  "article.aux"
   "article.out"
+  "article.thm"
+  "article.log"
+  "article.xdv"
+  "article.aux"

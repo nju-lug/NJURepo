@@ -77,11 +77,11 @@ $(error Unknown METHOD: $(METHOD))
 endif
 
 clean:
-	latexmk -c $(PACKAGE).dtx $(THESISMAIN) $(SHUJIMAIN)
+	latexmk -c $(PACKAGE).dtx $(EXAMPLE) 
 	-@$(RM) *~
 
 cleanall: clean
-	-@$(RM) $(PACKAGE).pdf $(THESISMAIN).pdf $(SHUJIMAIN).pdf
+	-@$(RM) $(PACKAGE).pdf $(EXAMPLE).pdf 
 
 distclean: cleanall
 	-@$(RM) $(CLSFILES)
