@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/zhengzangw/njurepo.svg?branch=master)](https://travis-ci.org/zhengzangw/njurepo)
+![Version](https://img.shields.io/badge/status-building.svg)
+
 # WARNING
 **It's still a toy!** 
 **It's still a toy!**
