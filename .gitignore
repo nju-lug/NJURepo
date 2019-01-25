@@ -1,10 +1,9 @@
 .DS_Store
 dtx-style.sty
-thuthesis.cls
-thuthesis.cfg
-thuthesis.pdf
-main.pdf
-shuji.pdf
+njurepo.cls
+njurepo.cfg
+njurepo.pdf
+example.pdf
 *.hd
 
 ## Core latex/pdflatex auxiliary files:
