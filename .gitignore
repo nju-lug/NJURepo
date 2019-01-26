@@ -5,6 +5,8 @@ njurepo.cfg
 njurepo.pdf
 example.pdf
 *.hd
+*.bak
+*.sav
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
