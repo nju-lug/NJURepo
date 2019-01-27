@@ -1095,7 +1095,6 @@
 %
 % \subsubsection{封面}
 % \label{sec:cover}
-% \begin{macro}{\nju@def@term}
 % 定义封面参数。
 %    \begin{macrocode}
 \def\nju@def@term#1{%
@@ -1364,6 +1363,7 @@
   \let\@tabular\nju@tabular
 }
 %    \end{macrocode}
+% \end{macro}
 %
 % \subsubsection{摘要}
 % \label{sec:abstractformat}
@@ -1477,7 +1477,7 @@
 %    \end{macrocode}
 %
 %  \cs{cleardoublepage}，使新开章节的页码到达正确的状态。否则会因为 \cs{addcontentsline}
-% 在 chapter 之前而导致目录页码错误。}
+% 在 chapter 之前而导致目录页码错误。
 % 定义致谢与声明环境。
 %    \begin{macrocode}
 \NewDocumentEnvironment{acknowledgement}{o}{%

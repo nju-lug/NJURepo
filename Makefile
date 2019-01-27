@@ -32,7 +32,7 @@ cls: $(CLSFILES)
 $(CLSFILES): $(SOURCES)
 	xelatex $(PACKAGE).ins
 
-texdoc: doc
+viewdoc: doc
 	$(OPEN) $(PACKAGE).pdf
 
 doc: $(PACKAGE).pdf
@@ -44,11 +44,11 @@ main: $(EXAMPLE).pdf
 
 ifeq ($(METHOD),latexmk)
 
-$(PACKAGE).pdf: $(SOURCES) FORCE_MAKE
+$(PACKAGE).pdf: $(CLSFILES) $(EXAMPLE) FORCE_MAKE
 	$(METHOD) $(LATEXMKOPTS) $(PACKAGE).dtx
 
 $(EXAMPLE).pdf: $(CLSFILES) FORCE_MAKE
-	$(METHOD) $(LATEXMKOPTS) $(EAXMPLE)
+	$(METHOD) $(LATEXMKOPTS) $(EXAMPLE)
 
 else ifneq (,$(filter $(METHOD),xelatex pdflatex))
 
