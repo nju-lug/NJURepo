@@ -36,5 +36,5 @@ install:
     txfonts xkeyval
 
 script:
-  - make example
+  - make main
   - make doc

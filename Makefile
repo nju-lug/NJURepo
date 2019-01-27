@@ -5,10 +5,10 @@
 METHOD = latexmk
 LATEXMKOPTS = -xelatex -file-line-error -halt-on-error -interaction=nonstopmode
 
-EXAMPLE= example
+EXAMPLE= main
 PACKAGE= njurepo
 SOURCES= $(PACKAGE).ins $(PACKAGE).dtx
-EXAMPLECONTENTS= $(EXAMPLE).tex examples/*.tex $(FIGURES)
+EXAMPLECONTENTS= $(EXAMPLE).tex mains/*.tex $(FIGURES)
 FIGURES=$(wildcard figures/*.pdf)
 BIBFILE=ref/*.bib
 BSTFILE=*.bst
@@ -23,9 +23,9 @@ else
 	OPEN = open
 endif
 
-.PHONY: all clean distclean example doc cls texdoc viewexample FORCE_MAKE
+.PHONY: all clean distclean main doc cls texdoc viewmain FORCE_MAKE
 
-all: doc example 
+all: doc main 
 
 cls: $(CLSFILES)
 
@@ -37,10 +37,10 @@ texdoc: doc
 
 doc: $(PACKAGE).pdf
 
-viewexample: example
+viewmain: main
 	$(OPEN) $(EXAMPLE).pdf
 
-example: $(EXAMPLE).pdf
+main: $(EXAMPLE).pdf
 
 ifeq ($(METHOD),latexmk)
 

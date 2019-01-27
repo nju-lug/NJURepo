@@ -1,4 +1,4 @@
-\documentclass{njurepo}
+\documentclass[language=english,open=any]{njurepo}
 \def\cmd#1{\cs{\expandafter\cmd@to@cs\string#1}}
 \def\cmd@to@cs#1#2{\char\number`#2\relax}
 \DeclareRobustCommand\cs[1]{\texttt{\char`\\#1}}
@@ -23,10 +23,14 @@
 
 % 确定浮动对象的位置，可以使用 H，强制将浮动对象放到这里（可能效果很差）
 \RequirePackage{float}
-\graphicspath{{figs/}}
+
 \begin{document}
 \frontmatter
-%\tableofcontents
+\input{examples/cover}
+\input{examples/abstract}
+\makecover
+\tableofcontents
+\input{examples/denotation}
 \mainmatter
 \include{examples/chap01}
 \include{examples/chap02}
@@ -35,8 +39,12 @@
 \listoffigures
 \listoftables
 \listofequations
-%\bibliographystyle{numeric}
-\bibliographystyle{author-year}
+\bibliographystyle{numeric}
+%\bibliographystyle{author-year}
 \bibliography{ref/refs}
 \include{examples/ack}
+%% 附录
+\begin{appendix}
+  \input{examples/appendix01}
+  \end{appendix}
 \end{document}
