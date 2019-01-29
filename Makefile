@@ -52,24 +52,21 @@ $(EXAMPLE).pdf: $(CLSFILES) FORCE_MAKE
 
 else ifneq (,$(filter $(METHOD),xelatex pdflatex))
 
-$(PACKAGE).pdf: $(CLSFILES) $(THESISMAIN).tex
+$(PACKAGE).pdf: $(CLSFILES) $(EXAMPLE).tex
 	$(METHOD) $(PACKAGE).dtx
 	makeindex -s gind.ist -o $(PACKAGE).ind $(PACKAGE).idx
 	makeindex -s gglo.ist -o $(PACKAGE).gls $(PACKAGE).glo
 	$(METHOD) $(PACKAGE).dtx
 	$(METHOD) $(PACKAGE).dtx
 
-$(THESISMAIN).pdf: $(CLSFILES) $(THESISCONTENTS) $(THESISMAIN).bbl
-	$(METHOD) $(THESISMAIN)
-	$(METHOD) $(THESISMAIN)
+$(EXAMPLE).pdf: $(CLSFILES) $(THESISCONTENTS) $(EXAMPLE).bbl
+	$(METHOD) $(EXAMPLE)
+	$(METHOD) $(EXAMPLE)
 
-$(THESISMAIN).bbl: $(BIBFILE) $(BSTFILE)
-	$(METHOD) $(THESISMAIN)
-	-bibtex $(THESISMAIN)
-	$(RM) $(THESISMAIN).pdf
-
-$(SHUJIMAIN).pdf: $(CLSFILES) $(SHUJICONTENTS)
-	$(METHOD) $(SHUJIMAIN)
+$(EXAMPLE).bbl: $(BIBFILE) $(BSTFILE)
+	$(METHOD) $(EXAMPLE)
+	-bibtex $(EXAMPLE)
+	$(RM) $(EXAMPLE).pdf
 
 else
 $(error Unknown METHOD: $(METHOD))
@@ -78,6 +75,7 @@ endif
 
 clean:
 	latexmk -c $(PACKAGE).dtx $(EXAMPLE) 
+	-@$(RM) parts/*.aux
 	-@$(RM) *~
 
 cleanall: clean

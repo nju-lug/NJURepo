@@ -1,50 +1,27 @@
-\documentclass[language=english,open=any]{njurepo}
-\def\cmd#1{\cs{\expandafter\cmd@to@cs\string#1}}
-\def\cmd@to@cs#1#2{\char\number`#2\relax}
-\DeclareRobustCommand\cs[1]{\texttt{\char`\\#1}}
-
-\newcommand*{\meta}[1]{{%
-  \ensuremath{\langle}\rmfamily\itshape#1\/\ensuremath{\rangle}}}
-\providecommand\marg[1]{%
-  {\ttfamily\char`\{}\meta{#1}{\ttfamily\char`\}}}
-\providecommand\oarg[1]{%
-  {\ttfamily[}\meta{#1}{\ttfamily]}}
-\providecommand\parg[1]{%
-  {\ttfamily(}\meta{#1}{\ttfamily)}}
-\providecommand\pkg[1]{{\sffamily#1}}
-% 表格中支持跨行
-\RequirePackage{multirow}
-
-% 固定宽度的表格
-\RequirePackage{tabularx}
-
-% 表格中的反斜线
-\RequirePackage{diagbox}
-
-% 确定浮动对象的位置，可以使用 H，强制将浮动对象放到这里（可能效果很差）
-\RequirePackage{float}
-
+\documentclass[language=chinese,open=any]{njurepo}
 \begin{document}
 \frontmatter
-\input{examples/cover}
-\input{examples/abstract}
+\input{parts/cover}
+\input{parts/abstract}
+\maketitlepage
 \makecover
+\makeabstract
 \tableofcontents
-\input{examples/denotation}
+\input{parts/denotation}
 \mainmatter
-\include{examples/chap01}
-\include{examples/chap02}
-%\include{examples/chap02}
+\maketitle
+\input{parts/problemsolving}
+\include{parts/chap01}
+\include{parts/chap02}
 \backmatter
 \listoffigures
 \listoftables
 \listofequations
-\bibliographystyle{numeric}
-%\bibliographystyle{author-year}
+\bibliographystyle{numeric} % numeric/author-year/plainnat/IEEEtran
 \bibliography{ref/refs}
-\include{examples/ack}
+\include{parts/ack}
 %% 附录
 \begin{appendix}
-  \input{examples/appendix01}
-  \end{appendix}
+  \input{parts/appendix01}
+\end{appendix}
 \end{document}
