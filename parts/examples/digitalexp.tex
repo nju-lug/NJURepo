@@ -1,0 +1,492 @@
+\chapter{实现功能}
+\section{硬件部分}
+\begin{enumerate}
+    \item \uline{五级流水线CPU}，实现除特殊访存指令外所有的逻辑、算术、移位、访存、跳转分支指令
+    \item \uline{解决数据相关、控制相关问题}。实现跳转指令仅延迟槽中内容一定被执行，第二条以后的指令不受影响；实现访存指令无需延迟槽。
+    \item 128KB内存同步读写
+    \item VGA，键盘，音频\uline{多IO的调度}
+    \item 代码段、数据段、栈段和IO段的\uline{内存划分}
+    \item \uline{MMIO}实现多IO管理
+\end{enumerate}
+\section{软件部分}
+\begin{enumerate}
+    \item 实现了\uline{750行汇编代码构成的操作系统}，包含三个被调用40次左右的系统函数。以 \verb|printanasciicode| 为例，仅适用90条指令实现了软件控制写入,节省了大量存储器空间，
+    \item \uline{代码实现显示字符功能}
+    \item 解析./gdb ./fib ./hello ./mu四条用户指令
+    \item \uline{gdb单步调试功能}，仿造实际控制流的跳转并输出
+    \item 计算斐波那契数列，实现由\uline{用户控制运算第几项}
+    \item 通过./mu开启电子琴使能，进入电子琴模式
+    \item 开机欢迎动画
+\end{enumerate}
+\section{其它}
+\begin{enumerate}
+    \item \uline{搭建MIPS32运行时环境(AM)}，可将C程序编译到MIPS32上，并支持字符输出。结合ICS课程的库函数和测试程序，可提供对大型程序的支持接口
+    \item 项目地址：\href{https://github.com/zhengzangw/NJU_MIPS}{https://github.com/zhengzangw/NJU\_MIPS}，提供了项目的说明文档、测试样例、开发工具(Makefile)和硬件实现的git记录。
+    \item 由于文件内容多，我们特别为老师批改方便准备了一份文件目录\ref{sec:wjml}结构于本报告的最后。老师可根据该结构验收项目文件，减小验收负担。
+\end{enumerate}
+\chapter{组内分工}
+\section{郑奘巍同学}
+\begin{itemize}
+    \item 工作量>35小时
+    \item 完成了整个五级流水线CPU的编写，实现大量指令，解决数据相关和结构相关
+    \item 实现了RAM，ROM和可读写ROM
+    \item 实现了VGA，键盘，音频等IO的连接和MMIO
+    \item 制作CPU测试样例和初始化IP核文件，完成硬件测试
+    \item 运行时环境的搭建，包括Turing Machine接口, ld文件和Makefile文件的编写
+\end{itemize}
+\section{沈天琪同学}
+\begin{itemize}
+    \item 工作量约30小时
+    \item 完成了整个操作系统的编写
+    \item 前期资料收集与系统结构设计，编写小部分测试样例
+    \item 欢迎动画的初始化文件编写，键盘模块与显存模块的设计
+    \item 共同完成最终硬件测试
+\end{itemize}
+
+
+\chapter{硬件部分}
+\section{五级流水线CPU的结构}
+    五级流水线CPU分为：取指，译码，执行，访存，回写五个阶段，使得一个周期可以同时进行五条指令。
+    %\fig{scale=0.4}{cpu1.jpg}{CPU基本结构}
+    %\fig{scale=0.4}{cpu3.png}{五级流水线}
+    基本结构如图\ref{fig:cpu1.jpg}所示，五级流水线执行流程如图\ref{fig:cpu3.png}所示。
+
+    可以看到，整个流水线由时钟CLOCK控制，各个模块之间设置传输模块，在每个时钟周期的上升沿将前一阶段的数据传递到下一个模块。本图中还省略了从执行阶段将跳转地址传递到pc、为解决数据冲突从执行和访存连接到译码模块等连线。
+
+    \subsection{取指模块} \label{sec:qzmk}
+    取指模块中，ce控制整个CPU的开关，pc为当前指令位置。jmp\_flag\_i 和 stall分别是跳转地址和控制流水线暂停的变量，将在后文讨论。
+    \begin{lstlisting}[language=Verilog]
+    always @ (posedge clk) begin
+		if (rst == `RSTENABLE) begin
+			ce <= `CHIPDISABLE;
+		end else begin
+			ce <= `CHIPENABLE;
+		end
+	end
+		
+	always @ (posedge clk) begin
+		if (ce == `CHIPDISABLE) begin
+			pc <= 32'h00000000;
+		end else if (stall[0] == `NOSTOP) begin
+			if (jmp_flag_i == `JMP) begin //跳转
+				pc <= jmp_target_address_i;
+			end else begin //地址增加
+				pc <= pc + 4'h4;
+			end
+		end
+    end
+    \end{lstlisting}
+
+    \subsection{译码模块} \label{sec:ymmk}
+    译码模块中，如果是R类型指令，我们使用如下的划分
+    \begin{lstlisting}[language=Verilog]
+        wire[5:0] op = inst_i[31:26]; //Instruction Code
+        wire[4:0] sa= inst_i[10:6];   //sa
+        wire[5:0] func = inst_i[5:0]; //Function Code
+        wire[4:0] rt = inst_i[20:16]; //rt
+        wire[4:0] rs = inst_i[25:21]; //rs
+        wire[4:0] rd = inst_i[15:11]; //rd
+    \end{lstlisting}
+    如果是I类型指令，我们将immediate的值无符号扩展后放入变量imm中；如果是J型指令，我们将前26位放入jmp\_target\_address中传入下个模块。整个译码模块为一个选择器，先更根据op确定第一级，如果为EXE\_SPECIAL,再根据func确定具体指令。如果为EXE\_REGIMM,再根据rt确定具体指令。
+    
+    对于每条指令，通过设置wreg, reg1\_read, reg2\_read控制寄存器读写开关，如果读入无效，则将立即数传递给第二个操作数。以addu指令和第二操作数的加载为例，代码如下。
+    \begin{lstlisting}[language=Verilog]
+    case (op) 
+        `EXE_SPECIAL: begin
+            case (func)
+                `EXE_ADDU: begin
+                    wreg_o <= `WRITEENABLE; //需要写入，默认为rd
+                    aluop_o <= `EXE_ADDU_OP; //操作为无符号加法
+                    alusel_o <= `EXE_RES_ARITH; //取算术运算结果
+                    reg1_read_o <= `READENABLE; //需要读第一个寄存器，默认为rs
+                    reg2_read_o <= `READENABLE; //需要读第二个寄存器，默认为rt
+                    instvalid <= `INSTVALID; //指令有效
+                end
+                ...
+            endcase
+        ...
+    endcase
+
+    always @(*) begin
+        stallreq_for_reg2_loadrelate <= `NOSTOP;
+        if (rst==`RSTENABLE) begin
+            reg2_o <= `ZEROWORD;
+        // Data Hazzard
+        end else if ( pre_inst_is_load == 1'b1 && ex_wd_i == reg2_addr_o
+                       && reg2_read_o == 1'b1 ) begin
+            stallreq_for_reg2_loadrelate <= `STOP; //load相关
+        end else if ((reg2_read_o==`READENABLE)&&(ex_wreg_i==`WRITEENABLE)&&       (ex_wd_i==reg2_addr_o)) begin
+            reg2_o <= ex_wdata_i; //来自执行模块的数据
+        end else if ((reg2_read_o==`READENABLE)&&(mem_wreg_i==`WRITEENABLE)&&      (mem_wd_i==reg2_addr_o)) begin
+            reg2_o <= mem_wdata_i; //来自访存模块的数据
+        end else if (reg2_read_o == `READENABLE) begin
+            reg2_o <= reg2_data_i; //需要读数据
+        end else if (reg2_read_o == `READDISABLE) begin
+            reg2_o <= imm; //无需读寄存器数据，默认提供立即数
+        end else begin
+            reg2_o <= `ZEROWORD;
+        end 
+    end
+    \end{lstlisting}
+
+    \subsection{执行模块}
+    执行模块由逻辑运算、移位运算、转移、算术模块、乘法模块、除法模块和跳转六个部分并行组成，根据取指模块传递进来的指令类型，选择相应的输出。其中乘法和除法向hi,lo输出，这里没有给出。具体的指令实现在\ref{sec:zlsx}节中给出。同时，由于除法实现的特殊性，我们专门设置了div模块来实现除法指令。
+    \begin{lstlisting}[language=Verilog]
+        always @(*) begin 
+            wd_o <= wd_i;
+		    if (((aluop_i == `EXE_ADD_OP)||(aluop_i == `EXE_SUB_OP))&&(overflow)  ) begin
+			    wreg_o <= `WRITEDISABLE; //无需写入
+		    end else begin
+				wreg_o <= wreg_i; //写入与译码模块要求相同
+		    end
+        case (alusel_i)
+            `EXE_RES_LOGIC: begin 
+                wdata_o <= logicout; //逻辑模块
+            end
+            `EXE_RES_SHIFT: begin
+                wdata_o <= shiftres; //移位模块
+            end
+            `EXE_RES_MOVE: begin
+                wdata_o <= moveres; //转移模块
+            end
+            `EXE_RES_ARITH: begin
+                wdata_o <= arithres; //计算模块
+            end
+            `EXE_RES_JUMP: begin
+                wdata_o <= link_address_i; //跳转模块
+            end
+            default: begin
+                wdata_o <= `ZEROWORD;
+            end
+        endcase
+    end 
+    \end{lstlisting}
+    \subsection{访存模块}
+        对于非访存指令，在访存模块只是进行数据的传递。对于访存指令，则通过译码模块传递进来的参数进行处理。该模块将向外连接到RAM中，以4字节为单位，向RAM提供地址，是否写入，写入数据等信息。其中，mem\_sel将控制更改的内容属于以4字节为单位的RAM中的哪几位。
+    \subsection{寄存器与回写模块}
+        回写模块没有单独实现，而是直接写在寄存器内。寄存器模块regfile实现了0-31号寄存器，hilo\_reg则实现了hi和lo寄存器。
+    
+\section{指令实现} \label{sec:zlsx}
+\subsection{逻辑指令}
+\subsubsection{基本实现}
+    逻辑指令是最简单的部分，共十七条指令，列举如下（uext为对立即数进行零扩展，逻辑位移与算术位移在表中没有体现，可自行区分）
+    \tabpc{4}{
+        and & rd $\leftarrow$ rs\&rt & or & rd $\leftarrow$ rs|rt \\ \hline
+        xor & rd $\leftarrow$ rs xor rt & nor & rd $\leftarrow$ \!(rs xor rt) \\ \hline
+        andi& rt $\leftarrow$ rs\&uext(imm) & xori & rt $\leftarrow$ rs xor uext(imm) \\ \hline 
+        lui & rt $\leftarrow$ \{imm, 16'b0\} & sll & rd $\leftarrow$ rt<<sa \\ \hline 
+        srl & rd $\leftarrow$ t>>sa & sra & rd $\leftarrow$ st>>sa \\ \hline
+        sllv & rd $\leftarrow$ rt<<rs[4:0] & rd $\leftarrow$ srlv & rt>>rs[4:0] \\ \hline
+        srav & rd $\leftarrow$ rt >> rs[4:0] & pref & nop 
+    }
+    实现了这些指令的同时，也实现了nop，ssnop，move等指令（语法糖）。这些指令的解耦方式基本上就是经历上述了五个模块，在取码后译码执行并回写。
+    \subsubsection{数据相关问题}
+    数据冲突指的是流水线中执行的几条指令中，一条指令依赖于前面指令的执行结果，具体又分为RAW,WAR,WAW三种情况。以如下代码为例:
+    \begin{verbatim}
+        ori $1, $0, 0x1100
+        ori $2, $1, 0x0020
+    \end{verbatim}
+    则在第二条指令的译码阶段，第一条指令还没到达回写阶段导致取得的值不正确。译码阶段和回写阶段相差了两个时钟周期，如果使用插入空指令的方法解决，则浪费时间与空间。我们通过数据前推，将计算结果从执行和访存阶段直接更新到后面指令的译码阶段，从而使其获得正确的结果。代码实现可见\ref{sec:ymmk}节，原理如下图所示。
+    %\fig{scale=0.4}{cpu5.png}{数据相关}
+
+\subsection{移位指令}
+    移位指令共6条如下。实现时，在译码阶段确定是否需要转移。对于hi,lo的移位操作，也需要考虑上述的数据相关问题。
+    \tabpc{4}{
+        movn & rd $\leftarrow$ rs if rt$\neq$0 & movz & rd $\leftarrow$ rs if rt=0  \\ \hline
+        mfhi & rd $\leftarrow$ hi & mflo & rd $\leftarrow$ lo \\ \hline
+        mthi& hi $\leftarrow$ rs & mtlo & lo $\leftarrow$ rs 
+    }
+\subsection{算术指令}
+\subsubsection{基本实现}
+    简单的算术指令共15条，实现时注意注意手册对指令的定义。add指令在加法溢出时不保存结果（溢出异常没有实现），addu则不进行溢出检查。其它指令也类似如此。比较特别的指令有slt保存大小比较结果以及clo保存高位1的个数，clz保存高位0的个数。
+    \tabpc{4}{
+        add(u) & rd $\leftarrow$ rs+rt & sub(u) & rd $\leftarrow$ rs-rt \\ \hline
+        slt(u) & rd $\leftarrow$ rs<rt & addi(u) & rd $\leftarrow$ rs+uext(imm) \\ \hline
+        slti(u)& rt $\leftarrow$ rs<uext(imm) & clo & 高位连续1的个数 \\ \hline 
+        clz & 高位连续0的个数 & mul & rd $\leftarrow$ rs*rt \\ \hline 
+        mult(u) & \{hi, lo\} $\leftarrow$ rs*rt & div(u) & \{hi, lo\} $\leftarrow$ rs/rt
+    }
+\subsubsection{除法}
+    我们使用了一种朴素的方法来实现除法。试商法需要32个周期进行除法运算，流程如下。为实现除法模块，我们参考了试商法的状态机设计，并添加流水线控制模块，当进入除法模块后停止整个流水线的运行，直到除法完成再恢复。可见本设计中除法的代价是很大的。
+    %\fig{scale=0.6}{div.png}{试商法流程}
+
+\subsection{跳转指令}
+\subsubsection{基本实现}
+    跳转指令共4条，分支指令10条这里不具体列出，指令的区别在于分支条件不同以及是否保存返回地址。在取指阶段判断是否跳转，如果需要则暂停流水线的运行，以解决结构冲突。以bltzal指令为例，该指令发生跳转当且仅当$rs<0$，且保存指令后地址为返回地址到第31号寄存器。跳转部分代码可见\ref{sec:qzmk}节。
+    \begin{lstlisting}[language=Verilog]
+        `EXE_BLTZAL: begin
+            wreg_o <= `WRITEENABLE; //需要写入寄存器
+            aluop_o <= `EXE_BLTZAL_OP; //操作指令
+            alusel_o <= `EXE_RES_JUMP; //操作类型
+            reg1_read_o <= `READENABLE; //需要读一个寄存器
+            reg2_read_o <= `READDISABLE;
+            wd_o <= 5'b11111; //需要将返回地址写入31号寄存器
+            link_addr_o <= pc_plus_8;  //返回地址
+            instvalid <= `INSTVALID; //指令有效
+            if (reg1_o[31]==1'b1) begin
+                jmp_target_address_o <= pc_plus_4 + imm_sll2_signedext; //跳转地址和
+                jmp_flag_o <= `JMP; //需要跳转
+                next_inst_in_delayslot_o <= `INDELAYSLOT; //下一条指令处于延迟槽
+            end
+        end
+    \end{lstlisting}
+    \begin{lstlisting}[language=C]
+    always @(*) begin
+        if (rst == `RSTENABLE) begin
+            stall <= 6'b000000;
+        end else if (stallreq_ex == `STOP) begin 
+            stall <= 6'b001111; //来自执行模块的停止流水线请求
+        end else if (stallreq_id == `STOP) begin 
+            stall <= 6'b000111; //来自译码模块的停止流水线请求
+        end else begin
+            stall <= 6'b000000;
+        end
+    end
+    \end{lstlisting}
+
+\subsection{访存指令}
+    访存过程中，我们使用IP核作为储存器，让IP核的频率为CPU的两倍，可实现同步访存。访存指令共8条如下：
+    \tabpc{4}{
+        lb & 字节加载 & lbu & 无符号字节加载 \\ \hline
+        lh & 半字加载 & lhu & 半字无符号加载 \\ \hline
+        lw & 字加载 & sw & 字储存 \\ \hline 
+        sb & 字节储存 & sh & 半字储存
+    }
+    以字节加载指令为例，其代码如下
+    \begin{lstlisting}[language=Verilog]
+        case (aluop_i)
+			`EXE_LB_OP: begin
+                mem_addr_o <= mem_addr_i;
+                mem_we <= `WRITEDISABLE;
+                mem_ce_o <= `CHIPENABLE;
+                case (mem_addr_i[1:0]) //根据最后两位选择写入值和选择变量
+                    2'b00: begin
+                        wdata_o <= {{24{mem_data_i[31]}}, mem_data_i[31:24]};
+                        mem_sel_o <= 4'b1000;
+                    end
+                    2'b01: begin
+                        wdata_o <= {{24{mem_data_i[23]}}, mem_data_i[23:16]};
+                        mem_sel_o <= 4'b0100;
+                    end
+                    2'b10: begin
+                        wdata_o <= {{24{mem_data_i[15]}}, mem_data_i[15:8]};
+                        mem_sel_o <= 4'b0010;
+                    end
+                    2'b11: begin
+                        wdata_o <= {{24{mem_data_i[7]}}, mem_data_i[7:0]};
+                        mem_sel_o <= 4'b0001;
+                    end
+                    default: begin
+                        wdata_o <= `ZEROWORD;
+                    end
+                ...
+			endcase
+        end
+    \end{lstlisting}
+
+    在访存指令中，也有一类数据相关，称为load相关，当需要使用的数据是由访存阶段读入时，就会出现此类问题。为此，当下一条指令需要用到上一条加载指令的结果时，我们也暂停流水线。
+
+    最终，我们的CPU的数据转移流大致如下。
+    %\fig{scale=0.4}{cpu6.jpg}{最终CPU的数据转移}
+
+\section{指令测试}
+    为了测试指令的正确性，我们利用仿真文件sopc\_tst.v对文件夹program/tst下的汇编测试样例进行仿真，并编写了showreg.do的脚步文件显示需要观测的变量值。
+
+\section{ROM, RAM与IO}
+\subsection{储存空间构建与IO配置}
+    我们利用IP核构建储存空间。储存设备如下：
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{|c|c|c|c|}
+            \hline
+            储存设备 & 大小 & 功能 & 初始内容 \\ \hline 
+            ROM & 4KB & 指令存储器 & 指令(.text节) \\
+            Writable ROM & 1KB & 可读写指令存储器（支持gdb） & 无 \\
+            RAM & 128KB & 内存 & 无 \\
+            GRAM & 1KB & 显存（存储字符）& 开机画面\\
+            \hline 
+        \end{tabular}
+    \end{table}
+
+    为实现Writable ROM，我们直接使用了reg型变量。对于其它储存器，我们利用了IP核进行构成。类似于内存条的位扩展，我们使用四个IP核构成ROM。每个ROM中相邻的两位在地址上相差4位。
+
+    IO设备复用了之前实验的代码，VGA以字符为单位显示，键盘支持全键位、组合键和大小写，电子琴支持和声。将储存器与CPU打包成sopc，我们构筑整个系统结构如下。
+    %\fig{scale=0.4}{cpu4.png}{系统架构}
+
+\subsection{MMIO}
+    为了提供对设备的访问，我们使用了内存映射管理所有IO。通过一系列判断语句，模拟了一个MMIO管理器，使得可以通过访存指令获得键盘输入、向VGA写入字符、控制电子琴。具体分配如下。
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{|c|c|c|}
+            \toprule
+            ADDRESS & DESCRIPTION & FUNCTION\\ \midrule
+            0x000000 - 0x003900 & ROM & for instruction executable; lw only \\
+            0x003900 - 0x004000 & RAM & for instruction	executable; lw,sw only \\
+            0x004000 - 0x005000 & GRAM & for video	readable, writable; access by vga(640*480)\\
+            0x005000 & keyboard enable & lb only \\
+            0x005004 & keyboard ascii & lb only \\
+            0x005008 & audio enable & wb only \\
+            - 0x006000 & Reserve & \\
+            0x006000 - 0x008000	& RAM:Data Section & \\
+            0x008000 - 0x010000 & RAM:Heap & \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+\section{运行时环境AM}
+    AM的概念是在拔尖班余子濠老师在计算机系统课程的PA作业中介绍的，我们摘录PA讲义部分如下：
+    %\fig{scale=0.5}{PA.png}{AM的概念}
+
+    在PA中，我们补充完成了x86-nemu的AM，并完成了虚拟机上的虚拟机x86-navy的AM。我们设想，通过完成相应的MIPS32的AM的设计，我们可以把PA中的小程序搬运到我们的CPU上（甚至仙剑奇侠传）。这个想法让我激动不已。然而由于没有实现中断以及时间问题，最终我们没有完成全部的设计。
+
+    我们实现了AM的Turing Machine的接口。
+    \begin{lstlisting}[language=C]
+        int video = 0x4001; //显存起始位置
+        void _putc(char ch) {
+            asm volatile(
+                "move $24, %0\n\t"
+                "sb %1, 0x0($24)\n\t"
+                :
+                :"r"(video), "r"(ch)
+            );
+            video++;
+        }
+
+        void _trm_init() {
+            asm volatile("ori $sp,$0,0x9000"); //设置栈区
+            _halt(main());
+        }
+
+        void _halt(int code) {
+        if (code) {
+            _putc('W'); _putc('A'); //HIT THE BAD TRAP
+        } else {
+            _putc('A'); _putc('C'); //HIT THE GOOD TRAP
+        }
+            while (1);
+        }
+    \end{lstlisting}
+
+    在loader.ld文件中，将代码节，数据节设置到与上节表格相对应的位置，将起始符号改为\_trm\_init，修改Makefile文件和bash脚本使其支持mips32 AM的编译，编译cputest下的dummy.c文件或sum.c文件，可以看到屏幕上出现了AC。这就相当与PA实验中的HIT THE GOOD TRAP. 由于已经有了\_putc函数，我们可以调用在PA中自己写的klib中的stdio.h中的printf来输出我们想要的格式了。
+    
+    理论上如果实现了系统调用，那么就可以把操作系统Nanos-lite和仙剑程序跑在我们的CPU上。可惜的是，余老师告诉我们由于没有cache和一些其它原因，这个过程还需要额外调用板上的设备以及及时跑起来可能也只能显示第一张图片就卡死了。考虑时间因素在内，我们最后放弃了这个实现。
+
+    如此一来，借助AM的力量，我们便可以把这两门课程的内容打通，从而更好的理解计算机的体系结构。
+
+\section{遇到的问题与解决方案}
+    \begin{itemize}
+        \item 实现CPU时的困难：流水线停止，div指令，累乘指令实现等，这些问题都有一定难度，通过阅读资料可以看到前人优秀的实现方法。通过学习可以用到我们的CPU中。
+        \item gdb的支持：原先的设计中代码区和数据区分类，代码区无法读写。为了实现对gdb的支持，强行用reg类型实现一个支持读写的代码段，以支持操作系统的设计。
+        \item IP核接口不足，无法同时支持CPU读写和VGA访问：由于显存本身较小，可以同时保存两份IP核的储存空间。虽然不是好方法，但是可以work。
+        \item MMIO的调试：MMIO的调试比其它指令的调试要复杂，因为此时仿真能提供的帮助很小。通过设计对于不同情况有不同反应的汇编代码和将一些信息直接从LED灯中输出可以帮助调试。
+    \end{itemize}
+\section{实验启示}
+    \begin{itemize}
+        \item 项目可以提升自己的多方面能力：通过完成本次实验，不仅提高了自己的Verilog代码能力，加深对CPU和计算机体系的理解，还提高了自己的团队合作能力，项目维护能力，Makefile,loader文件甚至是报告制作的能力。相比与老师提供的往年优秀实验报告的内容，我们两人组队不仅完成了其中三个人队伍的所有内容，还将CPU从单周期换位流水线并在各方面进行了拓展。
+        \item RTFM，STFW：遇到问题时，读帮助文档和上网搜索问题资料往往能够解决。
+        \item 课程的融汇贯通十分重要：将ICS课程中AM引入到数电实验中来，开启了新世界的大门。虽然我们并没有实现太多具体的程序，但是在以后学弟学妹的制作中，可以尝试把仙剑搬入数电实验之中。
+    \end{itemize}
+
+\chapter{软件部分}
+\section{操作系统的定义}
+    操作系统（英语：operating system，缩写作 OS）是管理计算机硬件与软件资源的计算机程序，同时也是计算机系统的内核与基石。操作系统需要处理如管理与配置内存、决定系统资源供需的优先次序、控制输入与输出设备、操作网络与管理文件系统等基本事务。操作系统也提供一个让用户与系统交互的操作界面。
+\section{操作系统中的约定}
+    \hspace{-3cm}
+    \begin{tabular}{|*{8}{c|}}
+    \hline
+    \$0 & 恒为0 & \$8 & Fib temp data & \$16 & gdb temp data & \$24 & 列标号 \\ \hline
+    \$1	& 留作编译器使用 & \$9 & Fib temp data & \$17 & gdb/testcase ret addr &	\$25 & 行标号\\ \hline
+    \$2	& 上一个ASCII输入 &	\$10 & Fib temp data &\$18 & gdb temp data &\$26 & Mu temp data \\ \hline
+    \$3	& sys temp data	& \$11 & Fib temp data & \$19 & gdb temp data & \$27 & 未处理行指针寄存器 \\ \hline
+    \$4 & sys temp data	& \$12 & Fib temp data &\$20 & gdb temp data & \$28 & ENTER信号\\ \hline
+    \$5	 & sys temp data & \$13 & Fib temp data(10) & \$21 &	Testcase use & \$29 & 恒为4\\ \hline
+    \$6 & sys temp data & \$14 & gdb temp data(addr) & \$22 & Testcase use & \$30 & 栈指针\\ \hline
+    \$7  & 在用户程序中保存\$ra & \$15 & gdb temp data(addr) & \$23 & ret data & \$31 & ret addr(\$ra)\\ \hline
+    \end{tabular}
+\section{屏幕显示功能}
+    最主要的是实现控制流的可控，保证其在主循环的轨道内运行。
+    %\fig{scale=1.0}{Picture1.png}{设计方案}
+    %\fig{scale=1.0}{Picture4.png}{输出逻辑}
+    我们将输入分为三种情形：1.不以./开头，我们认为这是普通文本，不执行比对。2.某一个命令，则此时执行对应命令。3.错误命令，则此时输出错误信息。最终均会回到主循环。\par
+    代码如下（这里省略了有关具体比对的细节）。
+    %\fig{scale=1.0}{Picture2.png}{代码}
+    值得注意的是，我们系统中没有一个通常意义上的键盘缓冲区，我们是借显存作为键盘缓冲区的，这就是为什么我们在寄存器堆中需要一个未处理行指针寄存器了。\par 
+    %\fig{scale=0.8}{Picture3.png}{读取函数}
+    读取键盘输入的函数十分简单，如图\ref{fig:Picture3.png}所示。而输出函数逻辑较为复杂，如\ref{fig:Picture4.png}所示。
+    函数主体约为如上。这部分的功能几乎与实验11等价。
+
+\clearpage
+\section{斐波那契数}
+    逻辑十分简单，首先接受输入，检测到ENTER信号之后从显存中读取数据，之后迭代运算，最后将结果除10，余数放入栈中，结果参与下一次除法直到为0，最后从栈中获得数据输出，形成十进制输出的情形。
+    第一部分，接收数据，等待ENTER输入，如图\ref{fig:Picture13.png}\ref{fig:Picture14.png}。
+    %\fig{scale=0.6}{Picture13.png}{输入部分}
+    %\fig{scale=0.6}{Picture14.png}{输入部分}
+    %\fig{scale=0.6}{Picture15.png}{第二部分}
+    %\fig{scale=0.6}{Picture16.png}{第三部分}
+    第二部分，ENTER信号产生并被接收后跳转于此，此时数据已经完整，进入迭代，如图\ref{fig:Picture15.png}。第三部分，另一个将数据写入栈中的循环，为输出做准备，如图\ref{fig:Picture16.png}。
+    %\fig{scale=0.6}{Picture17.png}{第四部分}
+    最后一部分，从栈中得到数据并不断将其写入显存（调用系统函数）由于最后写入了ENTER信号，这意味着我们最终要将这一个额外的信号清除，将未处理行指针寄存器写入正确的值。
+    %\fig{scale=0.4}{Picture18.png}{斐波那契数效果演示}
+\section{Hello World}
+    Hello world开机界面和命令展示如\ref{fig:Picture19.png}\ref{fig:Picture20.png}
+    %\fig{scale=0.5}{Picture19.png}{开机界面效果演示}
+    %\fig{scale=0.4}{Picture20.png}{hello命令效果演示}
+\section{电子琴}
+    电子琴程序的功能就是打开电子琴使能，并构建一个检测到backspace输入退出的程序
+    %\fig{scale=0.6}{Picture21.png}{电子琴代码}
+\section{单步调试}
+    我们的单步调试实现受到了操作系统异常处理程序的启发。
+    %\fig{scale=0.6}{Picture22.png}{Linux异常处理} 
+
+    而在我们的实现中，由于没有完成异常处理相关的协处理器与指令，这使得我们不得不采用一种模拟的手段来实现相关机制。在实现中，有testcase存放在0x2f00的位置，大体流程如\ref{fig:Picture23.png}
+    %\fig{scale=1.0}{Picture23.png}{单步调试流程} 
+
+    \clearpage
+    这三条特殊的指令为：
+    \begin{verbatim}
+    .org 0x2ef0
+        nop
+        jr  $ra             # jump to $ra
+        ori $17,$ra,0x0
+    \end{verbatim}
+    nop的位置就是将来会被替代的位置。\par
+    gdb相当于一个监视者，一次只允许一条指令的运行，当然这样实现是不完美的，他无法处理程序中有跳转的情况，在顺序执行的指令中，它等价于图\ref{fig:Picture24.png}\par 
+    
+    %\fig{scale=1.0}{Picture24.png}{gdb流程}
+\clearpage
+\section{遇到的问题与解决方案}
+    MARS不支持高级编译选项，所以我们搭建了一个交叉编译工具链。运用makefile实现了流程化的操作，当然，我们自己也写了一些小工具用以将各种初始化文件格式转化为了mif，见图\ref{fig:Picture34.png}(这部分请参考我写的mips交叉编译工具链的配置与使用——基于\verb|Ubuntu18.04|)\par
+    有时寄存器在使用时的未初始化会造成相当令人意外的结果，这时就要严格执行所用寄存器的保存于初始化。\par
+    MARS不支持高级编译选项，gdb无法在此调试：这使得我们只好在实机上调试，唯一问题就是每一次编译都十分缓慢，这就要求我们预先写好testcase，从简单开始，这样可以大大降低复杂度，有效排除硬件问题。
+    %\fig{scale=0.6}{Picture35.png}{测试文件}
+    %\fig{scale=1.0}{Picture34.png}{Makefile}
+\section{实验启示}
+    一定要多交流，有时你想不到的，或许别人就有一个很好的解决方案，互相查漏补缺，效率是很高的。
+
+\chapter{文件结构} \label{sec:wjml}
+    以下列出了重要文件及其内容。在主文件夹中大量文件属于IP核，为自动生成的文件。各部分文件夹下有Verilog文件和mif初始化文件，cpu文件夹下为CPU模块，具体见硬件内容描述。os.s为操作系代码。
+    \dirtree{%
+        .1 NJU\_MIPS.
+        .2 README.md.
+        .2 macro.v\DTcomment{宏定义}.
+        .2 NJU\_MIPS.v\DTcomment{顶层模块}.
+        .2 sopc.v\DTcomment{CPU和储存器模块}.
+        .2 cpu\DTcomment{MIPS五级流水线CPU代码}.
+        .3 cpu.v\DTcomment{CPU顶层模块}.
+        .2 data\_RAM\DTcomment{128K RAM代码}.
+        .2 inst\_RAM\DTcomment{指令储存器代码}.
+        .2 keyboard\DTcomment{键盘代码}.
+        .2 vga\DTcomment{VGA代码}.
+        .2 audio\DTcomment{电子琴代码}.
+        .2 simulation\DTcomment{仿真文件}.
+        .3 modelsim.
+        .4 sopc\_tst.v\DTcomment{对sopc.v的测试文件}.
+        .2 program\DTcomment{初始化代码及生成工具}.
+        .3 tst\DTcomment{测试样例}.
+        .3 os.s\DTcomment{操作系统代码}.
+        .3 inst\_rom.mif\DTcomment{初始化文件}.
+        .2 AM\DTcomment{运行时环境（修改自PA实验）}.
+        .3 am.
+        .4 arch.
+        .5 mips32\DTcomment{MIPS32运行时环境}.
+        .3 tests\DTcomment{测试文件}.
+    }

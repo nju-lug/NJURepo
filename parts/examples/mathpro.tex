@@ -1,0 +1,172 @@
+
+\section{出题}
+话说当今计算机业事，机器学习当道，码农趋之若鹜。遇投机者，以数月速学之，可夸夸其谈不下数个时辰，然则凡细节、原理之处，一概不通。更有好事者炒作概念，一时间机器学习从业者良莠不齐。为探求职者功力之深，G公司取一巧计，出题如下：
+
+线性方程组：
+\[
+	\begin{cases}
+		a_{11}x_1+a_{12}x_2+\cdots+a_{1n}x_n & =b_1 \\
+		a_{21}x_1+a_{22}x_2+\cdots+a_{2n}x_n & =b_2 \\
+		\cdots                               &      \\
+		a_{m1}x_1+a_{m2}x_2+\cdots+a_{mn}x_n & =b_m \\
+	\end{cases}
+\]
+
+可矩阵表示为 $\boldsymbol Ax=\boldsymbol b$ 其中 $\boldsymbol A\in \boldsymbol M_{m\times n}$，$x,\boldsymbol b\in \mathbb{R}^n$。在 $m>n$ 时，上述方程组多数情况下无解。但如果允许引入残差，将方程求解问题转化为最小化残差和问题，则仍可解。
+
+引入定义在 $\mathbb{R}^n$ 上的函数：残差平方和 $S(x)=\left\|\boldsymbol Ax-\boldsymbol b\right\|^2$。由此给出最小二乘解的形式化定义：对于线性方程组 $\boldsymbol Ax=\boldsymbol b$，求最小二乘解 $\hat x=\mathrm{argmin}(S(x))$，即 使 $S(x)$ 最小的 $x$。 这便是经典的最小二乘问题。
+\begin{problem}
+试计算最小二乘解，并考虑提供算法的实际应用情况
+\end{problem}
+
+\begin{solution}
+	这里只考虑较为简单的情况。首先设 $\boldsymbol A:$ 行向量分别为 $a_1,a_2,\cdots,a_m$，则有
+	\begin{align*}
+		S(x) & =\left\|\boldsymbol Ax-\boldsymbol b\right\|^2                      \\
+		     & =\sum_{i=1}^m (a_ix-b_i)^2                  \\
+		     & =\mathrm{tr}\left((\boldsymbol Ax-\boldsymbol b)^\top (\boldsymbol Ax-\boldsymbol b)\right)
+	\end{align*}
+
+	将求导运算推广到矩阵的迹上：下证对矩阵 $\boldsymbol A\in \boldsymbol M_{m\times n},\boldsymbol B\in \boldsymbol M_{n\times m}$，有
+
+	$$\frac{\partial \mathrm{tr}(\boldsymbol A\boldsymbol B)}{\partial \boldsymbol A}=\frac{\partial \mathrm{tr}(\boldsymbol B\boldsymbol A)}{\partial \boldsymbol A}=\boldsymbol B^\top $$
+
+	首先，有 $\mathrm{tr}(\boldsymbol A\boldsymbol B)=\sum_{i=1}^m \sum_{j=1}^n a_{ij}b_{ji}$，进而 $\frac{\partial \mathrm{tr}(\boldsymbol A\boldsymbol B)}{\partial a_{ij} }=b_{ji}$。从而可得上述命题。
+	并且类似地，我们有
+	$$\frac{\partial \mathrm{tr}(\boldsymbol A^\top \boldsymbol B)}{\partial a_{ij}}=\frac{\partial \mathrm{tr}(\boldsymbol B\boldsymbol A^\top )}{\partial a_{ij}}=\boldsymbol B$$
+
+	进而
+
+	\begin{align*}
+		\frac{\partial S(x)}{\partial x} & =\frac{\partial\mathrm{tr}\left((\boldsymbol Ax-\boldsymbol b)^\top (\boldsymbol Ax-\boldsymbol b)\right)}{\partial x} \\
+		                                 & =\frac{\partial\mathrm{tr}(x^\top \boldsymbol A^\top \boldsymbol Ax-\boldsymbol b^\top \boldsymbol Ax-\boldsymbol bx^\top \boldsymbol A^\top +\boldsymbol b^\top \boldsymbol b)}{\partial x} \\
+		                                 & =2(\boldsymbol A^\top \boldsymbol Ax-\boldsymbol A^\top \boldsymbol b)
+	\end{align*}
+
+	令导数为 $0$，得到 $\boldsymbol A^\top \boldsymbol Ax-\boldsymbol A^\top \boldsymbol b=0$，$\boldsymbol A^\top \boldsymbol A$ 可逆时，有
+	$$x=(\boldsymbol A^\top \boldsymbol A)^{-1}\boldsymbol A^\top \boldsymbol b$$
+\end{solution}
+
+\section{首试}
+三人之中，最先面试者为贾有才。其方见此题，心中窃喜，遂写下MATLAB代码：
+\begin{solution}
+	\hspace{1cm}$x = inv(A'*A)*A'*b; \mathrm{//MATLAB\, codes}$
+\end{solution}
+
+贾抬头，却见面试官微微摇头。贾大恐，遂解释其中数学推导云云，皆与上同，不复再言。然面试官不以为意。贾面试之结果可知也。
+
+贾之解法固然正确，何不得面试官之心耶？
+
+可以看到，在这种直接计算最小二乘解的过程中，我们进行了3次矩阵乘法，和一次矩阵求逆。矩阵乘法利用$O(n^3)$的暴力做法已足够快，即使利用$O(n^{2.8})$算法却因常数巨大、实现复杂且无法降低整体复杂度而常不被采用。虽然在矩阵乘法的优化空间小，矩阵求逆却有比最简单的高斯消元法更好的选择。
+
+回顾高斯消元求逆，假设矩阵为n阶方阵，一般我们先进行下三角消元。对于第$i$个主元，进行下三角消元时我们需要进行$(n-i)*(n+1-i)$次乘法和加法（消$n-i$行，每一行$n+1-i$个非0元素），所以将一次乘法和加法作为单位时间后，进行下三角消元消耗的时间为
+\[\sum_{i=1}^{n}(n-i)*(n+1-i)=\sum_{i=0}^{n-1}i*(i+1)=\frac{(n+1)n(n-1)}{3}\]
+而类似的，进行上三角消元时，我们要进行n次行变换。但由于此时每行只有一个非0元，所以总消耗为
+\[\sum_{i=0}^{n-1}i=\frac{(n-1)*n}{2}\]
+但是计算矩阵逆时同时要对$I_n$进行相同的行变换，由于操作完全对称，所以将最后时间乘二，我们就得到了高斯消元求逆的一个比较精确的时间相对值：
+\[T(n)=(\frac{(n+1)n(n-1)}{3}+\frac{(n-1)*n}{2})*2=\frac{2n^3+3n^2-5n}{3}=\frac{2}{3}n^3+O(n^2)\]
+
+而用$A^{-1}$求矩阵逆采用是最朴素的方法，其相对时间和上述计算相差无几。实际上存在更好的方法。
+
+\section{突破}
+其后面试者为甄汇。审题有饷，方落笔
+\begin{solution}
+	\hspace{1cm}$x=(A'*A)\backslash (A'*b); \mathrm{//MATLAB\, codes}$
+\end{solution}
+
+面试官微颔首。此句何意也？
+
+在$MATLAB$中，$\backslash$是矩阵左除的意思。即左乘矩阵的逆。在早期的MATLAB版本中，左除判断矩阵是否能够$LU$分解，若可以则使用$LU$分解求逆。
+
+该算法的思路为，将待求逆矩阵$A$分解成下三角矩阵$L$与$U$的乘积，再通过求解两个上（下）三角形方程组进行求解：
+
+\[\boldsymbol L\boldsymbol U\boldsymbol x=\boldsymbol b\Rightarrow\begin{cases}\boldsymbol L\boldsymbol y&=\boldsymbol b \\ \boldsymbol U\boldsymbol x&=\boldsymbol y\end{cases}\]
+
+对于下三角形方程组，易知有$O(n^2)$的计算方法$x_i=\frac{b_i-\sum_{i=1}^{m-1}l_{m,i}x_i}{l_{m,m}}$。若$LU$分解能在$O(n^3)$完成，则渐进时间复杂度与高斯消元相同。这看起来好像是画蛇添足，但实际不然。
+
+首先有如下命题：
+\begin{proposition}
+	设方阵A的各阶顺序主子式都非0，则存在下三角矩阵$\boldsymbol L$与上三角矩阵$\boldsymbol U$使得$\boldsymbol A=\boldsymbol L*\boldsymbol U$。
+\end{proposition}
+
+为了证明这个命题，我们有如下引理
+
+\begin{lemma}
+	若$\boldsymbol A$与$\boldsymbol B$都是n阶上（下）三角方阵，则$\boldsymbol A*\boldsymbol B$也是n阶上（下）三角方阵。
+\end{lemma}
+
+此处略去证明，因此引理只需用矩阵乘法的定义验证即可，即验证$\boldsymbol A*\boldsymbol B$的下方（上方）元素都为0，而这是显然的。这样我们就可以给出命题的证明
+\begin{proof}
+	考虑对$\boldsymbol A$进行高斯消元。注意到一个事实：进行下三角消元时，不需要用到行交换。也就是说，每一行在向下消元后，下一行的主元只会向右移一位。假设第$i$次消元将下一行主元右移了两位以上，则考虑A的$i+1$顺序主子式，其行向量线性相关，为0，矛盾。（这里同时也意味着$\boldsymbol A_{1,1}\not=0$）
+
+	由此知此高斯消元相当于左乘上三角初等阵$\boldsymbol P_i$，而$\boldsymbol P_i$为下三角初等阵。于是$\boldsymbol A=\boldsymbol P_i^{-1}*\boldsymbol P_i*\boldsymbol A=\boldsymbol P_i^{-1}*\boldsymbol A^\top$，此为消元过程。经过n次消元后，$\boldsymbol A$变为上三角阵，左乘了$n$个下三角初等阵，所以$\boldsymbol A=\boldsymbol P*\boldsymbol A^\top$，即$\boldsymbol A=\boldsymbol L*\boldsymbol U$。\hspace{3cm}证毕
+\end{proof}
+
+如何快速计算$\boldsymbol L$与$\boldsymbol U$呢？假设L的对角元素都为1（对应杜立特分解），下面给出一种递推算法：
+
+首先由$\boldsymbol L*\boldsymbol U=\boldsymbol A$，设$\boldsymbol L=(l_{i,j}),\boldsymbol U=(u_{i,j}),\boldsymbol A=(a_{i,j})$，显然有$u_{1,j}=a_{1,j}$，从而$l_{i,1}=\frac{a_{i,1}}{u_{1,j}}$。得到这两个初始条件后，如下递推计算剩下元素：
+\[u_{r,j}=\frac{a_{r,j}-\sum_{k=1}^{r-1}l_{i,k}u_{k,j}}{l_{r,r}}=a_{r,j}-\sum_{k=1}^{r-1}l_{i,k}*u_{k,j}\]
+\[l_{i,r}=\frac{a_{i,r}-\sum_{k=1}^{r-1}l_{i,k}u_{k,r}}{u_{r,r}}\]
+此法复杂度如何？注意到对于$l_{ir}$,需要最多$r$次乘除运算。$u_{rj}$计算的时间复杂度与$l_{ir}$相当。总时间复杂度为
+\[2*\sum_{i=1}^{n}\sum^{r=1}_{i-1}r=2*\sum_{i=1}^{n}\frac{i(i-1)}{2}=\sum_{i=1}^{n}i^2+O(n^2)=\frac{1}{3}n^3+O(n^2)\]
+
+再者是是两个三角形矩阵对应的方程求解，如上分析，时间为$O(n^2)$将所有步骤复杂度相加，可以发现相对于普通的高斯消元而言，其最高项系数确实减少了：
+\[T(n)=\frac{1}{3}n^3+O(n^2)\]
+
+在实际应用中，$LU$分解的高处甚于此，更有
+\begin{itemize}
+	\item 在MATLAB代码的具体实现中，$LU$分解（可以分解的情况下）解方程组的理论时间复杂度系数是高斯消元的$\frac{1}{3}$。当$n=1000$时，平均每次高斯消元耗时$30s$, $LU$分解法耗时$22s$。（机器性能类于学校机房机）
+	\item 节省内存开销。根据$LU$分解时的递推方法，我们不需要同时保存所有信息在内存中，求出$u_{rj}$后$a_{rj},j\geq r$的储存位置不再需要，求出$l_{ir}$后$a_{ir},i\geq r+1$的储存位置不再需要。对于超大矩阵，这可以节省大量内存空间。
+	\item 对于求解$\boldsymbol Ax=\boldsymbol b$其中$\boldsymbol A$固定，$b$取多个值的问题，同过一次$O(n^3)$的$LU$分解，每个$b$只需$O(n^2)$的三角矩阵求解即可。当$b$的数量$m$足够大时，时间复杂度为$O(mn^2)$优于$O(mn^3)$。
+\end{itemize}
+
+\section{真神技也！}
+最后登场者为超勇也。其人气宇轩昂，仪表不凡，洋洋洒洒落笔写道：
+\begin{solution}
+	$\mathrm{//MATLAB\,code}$
+	\begin{center}
+		$[Q, R] = qr(A);$ \\ $x=R\backslash(Q'*b);$
+	\end{center}
+\end{solution}
+
+面试官见此代码，有面露疑色而待解释者，有舒容展眉而称赞者。何以如此也？此非习线代者所不能得之方法也。可见此人定非碌碌之辈，或将效大力于公司。
+
+这首行代码，用的是$QR$分解，又称正交三角分解。它是把一个实可逆矩阵$\boldsymbol A$化成正交矩阵$\boldsymbol Q$和实非奇异上三角矩阵$\boldsymbol R$的乘积，$\boldsymbol A=\boldsymbol Q\boldsymbol R$。对于稀疏矩阵，可以使用Givens方法，对于一般矩阵，可以使用Householder方法求解。对于$n$阶矩阵，其时间复杂度为$O(n^3)$。篇幅有限，这里不展开讨论，有兴趣者可自行搜索相关资料。
+
+对于正交矩阵$\boldsymbol Q$，我们有$\boldsymbol Q^\top =\boldsymbol Q^{-1}$，故问题可转换为求$\boldsymbol Rx=\boldsymbol Q^\top \boldsymbol b$。又$\boldsymbol R$为上三角阵，故只需$O(n^2)$即可得到解。对于最小二乘问题，由$\boldsymbol Q^\top \boldsymbol Q=1$，我们更有惊喜的发现：
+\[\boldsymbol A^\top \boldsymbol Ax=\boldsymbol A^\top \boldsymbol b\Rightarrow (\boldsymbol Q\boldsymbol R)^\top \boldsymbol Q\boldsymbol R=(\boldsymbol Q\boldsymbol R)^\top \boldsymbol b\Rightarrow \boldsymbol R^\top \boldsymbol Rx=\boldsymbol R^\top \boldsymbol Q^\top \boldsymbol b\Rightarrow \boldsymbol Rx=\boldsymbol Q^\top \boldsymbol b\]
+
+如此一来，我们首先绕过了矩阵的乘法。为了了解其进一步的优点，我们引入一个新的概念：条件数
+\begin{definition}
+	对任意一个矩阵 $\boldsymbol A$ ，我们可以对它进行SVD分解 $\boldsymbol A = \boldsymbol U \boldsymbol \Sigma \boldsymbol  V^\top$ ，其中奇异值 $\sigma_1, \sigma_2, \ldots$  是 $\boldsymbol \Sigma$ 矩阵的对角线上的元素。定义矩阵 $\boldsymbol A$ 的条件数为
+	\[\mathrm{cond}\, \boldsymbol A = \frac{\max_i\sigma_i}{\min_i \sigma_i} \,. \]
+\end{definition}
+
+这里我们不给出条件数的推导和性质，只介绍其直观含义。当$\mathrm{cond}\, \boldsymbol A$越大时，计算的误差也就越大。想象高斯消元中，一个超大值(e.g. $10^{16}$)除以一个小值(e.g. $1^{-16}$)将会导致数值溢出，反之则会导致精度丢失。故保证计算时有较小的条件数是重要的。
+
+对于前两种方法，都计算了$A^\top A$，这导致$\mathrm{cond}\, \boldsymbol A^\top \boldsymbol A = \mathrm{cond}\boldsymbol V\boldsymbol\Sigma^2\boldsymbol V^\top = (\mathrm{cond} \boldsymbol A)^2$。 由此一来，条件数被平方了。
+
+而超氏的方法中，没有计算改矩阵乘法，避免了条件数被平方。配合以数值稳定的$Household$方法计算$QR$分解，将得到数值稳定的答案。
+
+\section{面试之外：MATLAB的反除函数}
+事实上，作为一款专业（付费）软件，MATLAB的函数一直在完善升级。当前的反除$\backslash$对大型矩阵运算时过程相当复杂。实际上，反除是使用一系列判断确定矩阵的特有性质（类型）选择最优的分解方法后进行求解。具体的判断如图所示。
+
+简单的概括，反除法下，MATLAB先判断矩阵是否为方阵，否则用$QR$分解，是则判断是否是三角阵或交换行的位置后构成三角阵。再判断是否（共轭）对称，对于对称阵，若可以三角分解，则使用Cholesky分解，其计算量约为$LU$分解的一半，否则使用LDL分解。若不对称，当矩阵是Hessenberg矩阵时（若 $a_{ij}=0， i>j+1$，則 $\boldsymbol A$ 称为上 Hessenberg 矩阵），可以针对其使用Hessenberg分解加速，否则才使用我们上述的$LU$分解。
+
+注意到对于$n$阶方阵，MATLAB并不会去选择$QR$分解，而对于最小二乘问题，$QR$分解有其特殊的好处。故超勇的方法确实比甄汇之方法优。
+
+而在MATLAB R2017b中，通过引入函数decomposition再次对反除法进行了优化。使用$\mathbb{tA=decomposition(A);\,x=tA\backslash b}$，可以先对$\boldsymbol A$进行合适的分解，再进行计算。这可以方便的实现前面提到的$LU$分解优点中的第三点。实践检验，对于$\boldsymbol A$不变$\boldsymbol b$改变的情况下，仅$1000$次运算$n=100$的矩阵，普通的反除效率和先使用decomposition的反除效率相乘达9倍。
+
+希望以上内容也能帮助你更好的使用MATLAB的函数。
+
+
+\section{结语}
+无名氏评曰：当今世事，群雄逐职，一位难求。非有扎实学问，超人之能，难以致臻高手之境，一招一回间，马脚尽露。数学者，计算机之基础也；线代、矩阵者，机器学习之基石也。仅一最小二乘问题，三法共解，高下立断。从计算机者，因以此为鉴，既应通过学习好的数学工具提升算法，也应不满足于仅于数学中得解，而因考虑何以快速的计算答案。此双剑合璧，可冠一方也。不学可乎？不精学可乎？
+
+\section*{参考资料}
+\begin{itemize}
+    \item[1] 方保镕，周继东，李医民 《矩阵论》
+    \item[2] 张晧 https://www.zhihu.com/question/62482926/answer/526304253
+    \item[3] 菡父 https://zhuanlan.zhihu.com/p/30958676
+    \item[4] 线代启示录 https://ccjou.wordpress.com
+\end{itemize}

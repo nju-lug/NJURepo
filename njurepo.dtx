@@ -295,7 +295,6 @@
   \do0\do1\do2\do3\do4\do5\do6\do7\do8\do9\do=\do/\do.\do:%
   \do\*\do\-\do\~\do\'\do\"\do\-}
 \Urlmuskip=0mu plus 0.1mu
-\RequirePackage{cleveref} 
 %    \end{macrocode}
 %
 % 页眉页脚设置
@@ -1846,8 +1845,32 @@
    rulecolor=\color{violet},
    language=[LaTeX]TeX}
 
+\lstdefinestyle{lstStylemyC}{%
+  style=lstStyleBase,
+  rulecolor=\color{blue},
+  language=C,
+  keywordstyle=\color{magenta}\bfseries\ttfamily,
+  commentstyle=\color{codegreen}\ttfamily,
+	stringstyle=\color{codepurple}\ttfamily\sffamily,
+	backgroundcolor=\color{backcolour},
+	breakatwhitespace=false,
+	breaklines=true,
+	captionpos=b,
+	keepspaces=true,
+	numbers=left,
+	numberstyle=\small\color{codegray},
+	stepnumber=2,
+	numbersep=5pt,
+	showstringspaces=false,
+	showspaces=false,
+	showtabs=false,
+	tabsize=2,
+	frame=tb
+}
+
 \lstnewenvironment{latex}{\lstset{style=lstStyleLaTeX}}{}
 \lstnewenvironment{shell}{\lstset{style=lstStyleShell}}{}
+\lstnewenvironment{myC}{\lstset{style=lstStylemyC}}{}
 %    \end{macrocode}
 %
 % \subsection{快速插入图片或图表}

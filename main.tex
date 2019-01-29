@@ -1,27 +1,29 @@
 \documentclass[language=chinese,open=any]{njurepo}
 \begin{document}
 \frontmatter
-\input{parts/cover}
-\input{parts/abstract}
+\input{parts/examples/cover}
+\input{parts/examples/abstract}
 \maketitlepage
 \makecover
 \makeabstract
 \tableofcontents
-\input{parts/denotation}
+\input{parts/examples/denotation}
 \mainmatter
 \maketitle
-\input{parts/problemsolving}
-\include{parts/chap01}
-\include{parts/chap02}
+\input{parts/examples/problemsolving}
+\input{parts/examples/mathpro}
+\include{parts/examples/chap01}
+\include{parts/examples/chap02}
+\include{parts/examples/digitalexp}
 \backmatter
 \listoffigures
 \listoftables
 \listofequations
 \bibliographystyle{numeric} % numeric/author-year/plainnat/IEEEtran
 \bibliography{ref/refs}
-\include{parts/ack}
+\include{parts/examples/ack}
 %% 附录
 \begin{appendix}
-  \input{parts/appendix01}
+  \input{parts/examples/appendix01}
 \end{appendix}
 \end{document}
