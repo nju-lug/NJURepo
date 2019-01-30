@@ -1,0 +1,84 @@
+\chapter{代码样式}
+\begin{algorithm}
+\caption{test}
+\begin{algorithmic}
+    \If {$i\geq maxval$}
+        \State $i\gets 0$
+    \Else
+        \If {$i+k\leq maxval$}
+            \State $i\gets i+k$
+        \EndIf
+    \EndIf
+\end{algorithmic}
+\end{algorithm}
+
+\begin{shell}
+    >> hello
+    >> python
+    shell code
+\end{shell}
+
+\begin{commandshell}
+    ls -al
+    cd /usr/lib
+\end{commandshell}
+
+\begin{latex}
+    \setvar{\myname}{\name}
+    \newcommand\myaddress{}
+    \newcommand{\address}[1]{\renewcommand{\myaddress}{#1}}
+\end{latex}
+
+\begin{cdisplay}
+    for (int k=0;k<n;++k){
+        for (int i=0;i<n;++i){
+            for (int j=0;j<n;++j){
+                a[i][j][k] = 0;
+            }
+        }
+    }
+    // 这个不是Floyed
+\end{cdisplay}
+
+\begin{algorithm}
+    \caption{代码标题}
+    \begin{cpseudo}
+        for (int k=0;k<n;++k){
+            for (int i=0;i<n;++i){
+                for (int j=0;j<n;++j){
+                    a[i][j][k] = 0;
+                }
+            }
+        }
+        // 这个不是Floyed
+    \end{cpseudo}
+\end{algorithm}
+
+\begin{cplus}
+    #include <bits/stdc++.h>
+    using namespace std;
+    int main(){
+        cout << "Hello World!" << endl;
+        return 0;
+    }
+\end{cplus}
+
+\begin{code}[language=Assembler]
+    mov %eax, $ebx
+    sub 3, %eax
+\end{code}
+
+\begin{python}
+    import pandas as pd
+    pd.read_csv("name.csv")
+\end{python}
+
+\begin{verilog}
+    always @ (posedge clk) begin
+		if (rst == `RSTENABLE) begin
+			ce <= `CHIPDISABLE;
+		end else begin
+			ce <= `CHIPENABLE;
+		end
+    end
+\end{verilog}

@@ -55,7 +55,7 @@
 
     \subsection{取指模块} \label{sec:qzmk}
     取指模块中，ce控制整个CPU的开关，pc为当前指令位置。jmp\_flag\_i 和 stall分别是跳转地址和控制流水线暂停的变量，将在后文讨论。
-    \begin{lstlisting}[language=Verilog]
+    \begin{verilog}
     always @ (posedge clk) begin
 		if (rst == `RSTENABLE) begin
 			ce <= `CHIPDISABLE;
@@ -75,22 +75,22 @@
 			end
 		end
     end
-    \end{lstlisting}
+    \end{verilog}
 
     \subsection{译码模块} \label{sec:ymmk}
     译码模块中，如果是R类型指令，我们使用如下的划分
-    \begin{lstlisting}[language=Verilog]
+    \begin{verilog}
         wire[5:0] op = inst_i[31:26]; //Instruction Code
         wire[4:0] sa= inst_i[10:6];   //sa
         wire[5:0] func = inst_i[5:0]; //Function Code
         wire[4:0] rt = inst_i[20:16]; //rt
         wire[4:0] rs = inst_i[25:21]; //rs
         wire[4:0] rd = inst_i[15:11]; //rd
-    \end{lstlisting}
+    \end{verilog}
     如果是I类型指令，我们将immediate的值无符号扩展后放入变量imm中；如果是J型指令，我们将前26位放入jmp\_target\_address中传入下个模块。整个译码模块为一个选择器，先更根据op确定第一级，如果为EXE\_SPECIAL,再根据func确定具体指令。如果为EXE\_REGIMM,再根据rt确定具体指令。
     
     对于每条指令，通过设置wreg, reg1\_read, reg2\_read控制寄存器读写开关，如果读入无效，则将立即数传递给第二个操作数。以addu指令和第二操作数的加载为例，代码如下。
-    \begin{lstlisting}[language=Verilog]
+    \begin{verilog}
     case (op) 
         `EXE_SPECIAL: begin
             case (func)
@@ -127,11 +127,11 @@
             reg2_o <= `ZEROWORD;
         end 
     end
-    \end{lstlisting}
+    \end{verilog}
 
     \subsection{执行模块}
     执行模块由逻辑运算、移位运算、转移、算术模块、乘法模块、除法模块和跳转六个部分并行组成，根据取指模块传递进来的指令类型，选择相应的输出。其中乘法和除法向hi,lo输出，这里没有给出。具体的指令实现在\ref{sec:zlsx}节中给出。同时，由于除法实现的特殊性，我们专门设置了div模块来实现除法指令。
-    \begin{lstlisting}[language=Verilog]
+    \begin{verilog}
         always @(*) begin 
             wd_o <= wd_i;
 		    if (((aluop_i == `EXE_ADD_OP)||(aluop_i == `EXE_SUB_OP))&&(overflow)  ) begin
@@ -160,7 +160,7 @@
             end
         endcase
     end 
-    \end{lstlisting}
+    \end{verilog}
     \subsection{访存模块}
         对于非访存指令，在访存模块只是进行数据的传递。对于访存指令，则通过译码模块传递进来的参数进行处理。该模块将向外连接到RAM中，以4字节为单位，向RAM提供地址，是否写入，写入数据等信息。其中，mem\_sel将控制更改的内容属于以4字节为单位的RAM中的哪几位。
     \subsection{寄存器与回写模块}
@@ -213,7 +213,7 @@
 \subsection{跳转指令}
 \subsubsection{基本实现}
     跳转指令共4条，分支指令10条这里不具体列出，指令的区别在于分支条件不同以及是否保存返回地址。在取指阶段判断是否跳转，如果需要则暂停流水线的运行，以解决结构冲突。以bltzal指令为例，该指令发生跳转当且仅当$rs<0$，且保存指令后地址为返回地址到第31号寄存器。跳转部分代码可见\ref{sec:qzmk}节。
-    \begin{lstlisting}[language=Verilog]
+    \begin{verilog}
         `EXE_BLTZAL: begin
             wreg_o <= `WRITEENABLE; //需要写入寄存器
             aluop_o <= `EXE_BLTZAL_OP; //操作指令
@@ -229,8 +229,8 @@
                 next_inst_in_delayslot_o <= `INDELAYSLOT; //下一条指令处于延迟槽
             end
         end
-    \end{lstlisting}
-    \begin{lstlisting}[language=C]
+    \end{verilog}
+    \begin{verilog}
     always @(*) begin
         if (rst == `RSTENABLE) begin
             stall <= 6'b000000;
@@ -242,7 +242,7 @@
             stall <= 6'b000000;
         end
     end
-    \end{lstlisting}
+    \end{verilog}
 
 \subsection{访存指令}
     访存过程中，我们使用IP核作为储存器，让IP核的频率为CPU的两倍，可实现同步访存。访存指令共8条如下：
@@ -253,7 +253,7 @@
         sb & 字节储存 & sh & 半字储存
     }
     以字节加载指令为例，其代码如下
-    \begin{lstlisting}[language=Verilog]
+    \begin{verilog}
         case (aluop_i)
 			`EXE_LB_OP: begin
                 mem_addr_o <= mem_addr_i;
@@ -282,7 +282,7 @@
                 ...
 			endcase
         end
-    \end{lstlisting}
+    \end{verilog}
 
     在访存指令中，也有一类数据相关，称为load相关，当需要使用的数据是由访存阶段读入时，就会出现此类问题。为此，当下一条指令需要用到上一条加载指令的结果时，我们也暂停流水线。
 
@@ -339,7 +339,7 @@
     在PA中，我们补充完成了x86-nemu的AM，并完成了虚拟机上的虚拟机x86-navy的AM。我们设想，通过完成相应的MIPS32的AM的设计，我们可以把PA中的小程序搬运到我们的CPU上（甚至仙剑奇侠传）。这个想法让我激动不已。然而由于没有实现中断以及时间问题，最终我们没有完成全部的设计。
 
     我们实现了AM的Turing Machine的接口。
-    \begin{lstlisting}[language=C]
+    \begin{verilog}
         int video = 0x4001; //显存起始位置
         void _putc(char ch) {
             asm volatile(
@@ -364,7 +364,7 @@
         }
             while (1);
         }
-    \end{lstlisting}
+    \end{verilog}
 
     在loader.ld文件中，将代码节，数据节设置到与上节表格相对应的位置，将起始符号改为\_trm\_init，修改Makefile文件和bash脚本使其支持mips32 AM的编译，编译cputest下的dummy.c文件或sum.c文件，可以看到屏幕上出现了AC。这就相当与PA实验中的HIT THE GOOD TRAP. 由于已经有了\_putc函数，我们可以调用在PA中自己写的klib中的stdio.h中的printf来输出我们想要的格式了。
     

@@ -216,6 +216,7 @@
 \DeclareBoolOption{wide}
 \DeclareBoolOption{color}
 \DeclareBoolOption{draft}
+\DeclareBoolOption{awesomefont}
 \DeclareDefaultOption{\PassOptionsToClass{\CurrentOption}{ctexbook}}
 
 \ProcessKeyvalOptions*
@@ -833,21 +834,28 @@
 \newtheorem{solution}{\nju@solution@name}[chapter]
 
 \RequirePackage{microtype}
+
+\ifnju@awesomefont
+\ifnju@chinese
+\newcommand{\promisewords}{请独立完成作业，不得抄袭。\\若参考了其它资料，请给出引用。\\鼓励讨论，但需独立书写解题过程。}
+\else
+\newcommand{\promisewords}{I promise this work is done on my own with no plagiarism.}
+\fi
+\newcommand{\pshw}{\section*{\scshape Part I\ \ \ Homework}}
+\newcommand{\pscr}{\section*{\scshape Part II\ \ \ Correction}}
+\newcommand{\psfb}{\section*{\scshape Part III\ \ \ Feedback}}
 \RequirePackage{fontawesome}
-\theoremstyle{break}
-\theoremprework{\vspace{1cm}}
-\newtheorem{ps@problem}{\faQuestionCircle\ \nju@problem@name}
-\theorempostwork{\hrule}
+\newcommand{\Hrule}{\noindent\rule{\linewidth}{0.5mm}}
+\theorempostwork{\vspace{-0.5cm}\Hrule}
 \newtheorem*{pssolution}{\faPencilSquareO\ \nju@solution@name}
-\RequirePackage{framed}
-\RequirePackage{etoolbox}
+\RequirePackage[listings]{tcolorbox}
+\newtcolorbox{ps@problem}[1]{fonttitle=\bfseries,title=#1,before skip=0.5cm, after skip=-0.5cm}
 \newenvironment{psproblem}[1][]{
-    \begin{ps@problem}[#1]
-      \begin{leftbar}
+    \begin{ps@problem}{\faQuestionCircle\ \nju@problem@name #1}
 }{
-      \end{leftbar}  
     \end{ps@problem}
 }
+\fi
 %
 % \subsubsection{浮动对象}
 % \label{sec:float}
@@ -1787,6 +1795,20 @@
 %\marginpar{这是边注}
 %\subsection{代码}
 %    \begin{macrocode}
+\RequirePackage{xcolor}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+\newcommand{\redoverlay}[2]{\textcolor<#2>{red}{#1}}
+\newcommand{\green}[1]{\textcolor{green}{#1}}
+\newcommand{\greenoverlay}[2]{\textcolor<#2>{green}{#1}}
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\blueoverlay}[2]{\textcolor<#2>{blue}{#1}}
+\newcommand{\purple}[1]{\textcolor{purple}{#1}}
+\newcommand{\cyan}[1]{\textcolor{cyan}{#1}}
+\newcommand{\teal}[1]{\textcolor{teal}{#1}}
 \RequirePackage{verbatim}
 \RequirePackage{algorithm}
 \RequirePackage{algpseudocode}
@@ -1831,7 +1853,11 @@
    backgroundcolor=\color{gray!5},
    stringstyle=\color{green!40!black!100},
    keywordstyle=\bfseries\color{blue!50!black},
-   commentstyle=\slshape\color{black!60}}
+   commentstyle=\slshape\color{black!60}
+}
+
+\newtcblisting{commandshell}{colback=black,colupper=white,colframe=yellow!75!black, listing only,listing options={style=tcblatex,language=sh},
+every listing line={\textcolor{red}{\small\ttfamily\bfseries root \$> }}}
 
 \lstdefinestyle{lstStyleShell}{%
    style=lstStyleBase,
@@ -1845,32 +1871,65 @@
    rulecolor=\color{violet},
    language=[LaTeX]TeX}
 
-\lstdefinestyle{lstStylemyC}{%
+\lstdefinestyle{lstStylecdisplay}{%
   style=lstStyleBase,
-  rulecolor=\color{blue},
-  language=C,
+  frame=tb,
+  rulecolor=\color{cyan},
   keywordstyle=\color{magenta}\bfseries\ttfamily,
   commentstyle=\color{codegreen}\ttfamily,
 	stringstyle=\color{codepurple}\ttfamily\sffamily,
 	backgroundcolor=\color{backcolour},
-	breakatwhitespace=false,
-	breaklines=true,
 	captionpos=b,
-	keepspaces=true,
 	numbers=left,
-	numberstyle=\small\color{codegray},
-	stepnumber=2,
-	numbersep=5pt,
-	showstringspaces=false,
-	showspaces=false,
-	showtabs=false,
-	tabsize=2,
-	frame=tb
+	numberstyle=\footnotesize\color{codegray},
+	stepnumber=1,
+  numbersep=5pt,
+  language=C
 }
 
+\lstdefinestyle{lstStylecpseudo}{%
+  style=lstStyleBase,
+  frame=none,
+  keywordstyle=\color{magenta}\bfseries\ttfamily,
+  commentstyle=\color{codegreen}\ttfamily,
+	stringstyle=\color{codepurple}\ttfamily\sffamily,
+	captionpos=b,
+	numbers=left,
+	numberstyle=\footnotesize\color{codegray},
+	stepnumber=1,
+  numbersep=5pt,
+  language=C
+}
+
+\lstdefinestyle{lstStylecplus}{%
+  style=lstStyleBase,
+  frame=l,
+  rulecolor=\color{blue},
+  language=C++
+}
+
+\lstdefinestyle{lstStyleverilog}{%
+  style=lstStyleBase,
+  frame=l,
+  rulecolor=\color{brown},
+  language=verilog
+}
+
+\lstdefinestyle{lstStylepython}{%
+  style=lstStyleBase,
+  frame=l,
+  rulecolor=\color{pink},
+  language=python
+}
+
+\lstnewenvironment{code}{\lstset{style=lstStyleBase}}{}
 \lstnewenvironment{latex}{\lstset{style=lstStyleLaTeX}}{}
 \lstnewenvironment{shell}{\lstset{style=lstStyleShell}}{}
-\lstnewenvironment{myC}{\lstset{style=lstStylemyC}}{}
+\lstnewenvironment{cdisplay}{\lstset{style=lstStylecdisplay}}{}
+\lstnewenvironment{cplus}{\lstset{style=lstStylecplus}}{}
+\lstnewenvironment{verilog}{\lstset{style=lstStyleverilog}}{}
+\lstnewenvironment{python}{\lstset{style=lstStylepython}}{}
+\lstnewenvironment{cpseudo}{\lstset{style=lstStylecpseudo}}{}
 %    \end{macrocode}
 %
 % \subsection{快速插入图片或图表}

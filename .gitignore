@@ -3,7 +3,9 @@ dtx-style.sty
 njurepo.cls
 njurepo.cfg
 njurepo.pdf
-main.pdf
+*.pdf
+!njurepo.pdf
+!example.pdf
 *.hd
 *.bak
 *.sav

@@ -76,6 +76,7 @@ endif
 clean:
 	latexmk -c $(PACKAGE).dtx $(EXAMPLE) 
 	-@$(RM) parts/*.aux
+	-@$(RM) parts/examples/*.aux
 	-@$(RM) *~
 
 cleanall: clean
