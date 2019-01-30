@@ -1,5 +1,4 @@
-[![Build Status](https://travis-ci.org/zhengzangw/njurepo.svg?branch=master)](https://travis-ci.org/zhengzangw/njurepo)
-![Version](https://img.shields.io/badge/status-building-blue.svg)
+![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)
 
 # What's NJUrepo?
 NJUrepo stands for <b>N</b>an<b>j</b>ing <b>U</b>niversity versatile <b>Repo</b>rt.
@@ -7,12 +6,8 @@ NJUrepo stands for <b>N</b>an<b>j</b>ing <b>U</b>niversity versatile <b>Repo</b>
 NJUrepo是为南京大学本科生设计的一个免于配置的作业、实验报告模板。希望它可以使你
 的作业/实验报告不会因形式上的缺陷导致评分的下降。
 
-# 其它选择
-本宏包参考了以下宏包的设计。鉴于该宏包尚未成熟，如果你想要一个更加稳定的
-文档类，本项目参考的以下宏包会是一个好的选择：
-
-* ThuThesis https://github.com/xueruini/thuthesis
-* NJUBachelor https://github.com/ZLCao/NJUBachelor
+# 使用方法
+下载后参考njurepo.pdf文档和example.pdf示例文档，以及main.tex和parts/examples/的示例代码进行使用。生成文件方法见Makefile的用法
 
 # Makefile的用法
 
