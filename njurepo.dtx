@@ -16,7 +16,7 @@
 %
 % \iffalse
 %<*driver>
-\ProvidesFile{njurepo.dtx}[2019/01/25 1.0.0 Nanjing University Report Template]
+\ProvidesFile{njurepo.dtx}[2019/01/29 1.0.1 Nanjing University Report Template]
 \documentclass{ltxdoc}
 \usepackage{dtx-style}
     \EnableCrossrefs
@@ -69,7 +69,8 @@
 % \DoNotIndex{\@@par,\DeclareOperation,\RequirePackage,\LoadClass}
 % \DoNotIndex{\AtBeginDocument,\AtEndDocument}
 %
-% \changes{v1.0}{2019/01/22}{Initial version}
+% \changes{v1.0.0}{2019/01/22}{Initial version}
+% \changes{v1.0.1}{2019/01/29}{Add more ability}
 %
 % \GetFileInfo{\jobname.dtx}
 %
@@ -78,7 +79,7 @@
 % \IndexPrologue{\section{\indexname}}
 % \GlossaryPrologue{\section{\glossaryname}}
 
-% \title{\bfseries\color{violet}\njurepo： 为了方便而整合起来的模板}
+% \title{\bfseries\color{violet}\njurepo： 南京大学本科生范用报告}
 % \author{郑奘巍 \\[5pt]\texttt{zhengzangw@gmail.com}}
 % \date{\fileversion\ (\filedate)}
 % \maketitle\thispagestyle{empty}
@@ -833,7 +834,7 @@
 \newtheorem{conjecture}{\nju@conjecture@name}[chapter]
 \newtheorem{solution}{\nju@solution@name}[chapter]
 
-\RequirePackage{microtype}
+%\RequirePackage{microtype}
 \ifnju@chinese
 \newcommand{\promisewords}{请独立完成作业，不得抄袭。\\若参考了其它资料，请给出引用。\\鼓励讨论，但需独立书写解题过程。}
 \else
