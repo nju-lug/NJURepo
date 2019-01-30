@@ -204,7 +204,7 @@
 \hyphenation{NJU-repo}
 \def\njurepo{\textsc{NJU}\-\textsc{repo}}
 \def\thuthesis{\textsc{Thu}\-\textsc{Thesis}}
-\def\version{1.0.0}
+\def\version{1.0.1}
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{
     family=nju,
@@ -834,8 +834,6 @@
 \newtheorem{solution}{\nju@solution@name}[chapter]
 
 \RequirePackage{microtype}
-
-\ifnju@awesomefont
 \ifnju@chinese
 \newcommand{\promisewords}{请独立完成作业，不得抄袭。\\若参考了其它资料，请给出引用。\\鼓励讨论，但需独立书写解题过程。}
 \else
@@ -844,18 +842,21 @@
 \newcommand{\pshw}{\section*{\scshape Part I\ \ \ Homework}}
 \newcommand{\pscr}{\section*{\scshape Part II\ \ \ Correction}}
 \newcommand{\psfb}{\section*{\scshape Part III\ \ \ Feedback}}
-\RequirePackage{fontawesome}
 \newcommand{\Hrule}{\noindent\rule{\linewidth}{0.5mm}}
+
+\ifnju@awesomefont
+\RequirePackage{awesomefont}
+\fi
+
 \theorempostwork{\vspace{-0.5cm}\Hrule}
-\newtheorem*{pssolution}{\faPencilSquareO\ \nju@solution@name}
+\newtheorem*{pssolution}{\ifnju@awesomefont\faPencilSquareO\ \fi\nju@solution@name}
 \RequirePackage[listings]{tcolorbox}
 \newtcolorbox{ps@problem}[1]{fonttitle=\bfseries,title=#1,before skip=0.5cm, after skip=-0.5cm}
 \newenvironment{psproblem}[1][]{
-    \begin{ps@problem}{\faQuestionCircle\ \nju@problem@name #1}
+    \begin{ps@problem}{\ifnju@awesomefont\faQuestionCircle\ \fi\nju@problem@name\ #1}
 }{
     \end{ps@problem}
 }
-\fi
 %
 % \subsubsection{浮动对象}
 % \label{sec:float}

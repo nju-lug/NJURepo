@@ -1,11 +1,10 @@
-s\pshw
+\pshw
 \begin{psproblem}[26.1.1]
     We will show that each
 \end{psproblem}
 \begin{pssolution}
     We will show that each flow in G' is mapping to a flow of same value in G and vice versa. Thus the maximum flow in G' has the same value as a maximum flow in G.
 
-    \marginpar{this is marginpar}
     For a flow in G, consider the flow f, in which there exist antiparallel edge $v_i->v_j$ and $v_j->v_i$. Suppose the flow on $v_i->v_j$ is $F$ and $F'$ in another direction. The flow f' in G' has same flow in each edge except that $v_i->v_j$ is replaced by $v_i->v'$ and $v'->v_j$ and the flow is $F$. It is obvious that Capacity constraint and Flow conservation meets. The value of f' is 
         $$|f'|=\sum_{v\in V'}f'(s,v)-\sum{v\in V'}f'(v,s)$$ 
     If there is no antiparallel edges incident with s, the value is same. Otherwise, $f(s,v)=f'(s,v')$ the value is still the same.
