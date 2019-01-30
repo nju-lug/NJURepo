@@ -71,6 +71,7 @@
 %
 % \changes{v1.0.0}{2019/01/22}{Initial version}
 % \changes{v1.0.1}{2019/01/29}{Add more ability}
+% \changes{v1.1.0}{2019/01/29}{Stable version}
 %
 % \GetFileInfo{\jobname.dtx}
 %
@@ -85,11 +86,7 @@
 % \maketitle\thispagestyle{empty}
 %
 % \begin{abstract}\noindent
-% 此宏包旨在建立一个免于配置的作业、实验报告模板。借鉴的宏包如下：
-% \begin{itemize}
-%  \item 清华大学\thuthesis https://github.com/xueruini/thuthesis
-%  \item 南京大学 NJUBachelor https://github.com/ZLCao/NJUBachelor
-% \end{itemize}
+% 此宏包旨在建立一个免于配置的、指令相对简单的南京大学作业、实验报告通用模板。
 % \end{abstract}
 %
 %
@@ -100,8 +97,8 @@
 % \begin{enumerate}
 % \item 本模板的发布遵守 \LaTeX\ Project Public License，使用前请认真阅读协议内
 %   容。
-% \item 本模板为作者根据清华大学的论文模板\thuthesis{}等改写而成。因作者能力有限，可以选择使用\thuthesis{}模板
-% 并自定义选项和手动添加宏包，可能达到比本模板更加好的效果。
+% \item \textbf{本模板为作者自己通常使用的报告模板，与南京大学官方没有任何关系}。任何使用该宏包进行实验报告制作时，请\textbf{务必根据课程要求进行写作}。由于使用本模板而引起的作业验收问题，均与本模板作者无关。
+% \item 本模板借鉴\thuthesis{}宏包的大量内容，需要稳定模板的同学也可以选择使用清华大学的\thuthesis{}宏包并自己进行配置。
 % \item 任何个人或组织以本模板为基础进行修改、扩展而生成的新的专用模板，请严格遵
 %   守 \LaTeX\ Project Public License 协议。由于违犯协议而引起的任何纠纷争端均与
 %   本模板作者无关。
@@ -117,13 +114,17 @@
 % \end{multicols}
 % \clearpage
 %
-%
+% \section{模板介绍}
+% \njurepo\ (\textbf{N}an\textbf{jing} \textbf{U}niversity \LaTeX\ Versatile \textbf{Repo}rt Template)是根据作者用\LaTeX{}制作南京大学课程实验报告的模板文件，可帮助本科生快速的制作实验报告和作业。
+% 本文档将尽量完整的介绍模板的使用方法，如有不清楚之处可以参考示例文档或者根据第 3.1 节说明提问，有兴趣者都可以参与完善此手册，也非常欢迎对代码的贡献。
+% 
 % \section{安装}
 % \label{sec:installation}
-% \njurepo 尚未包含于\TeX 发行版中，需要自行前往ginjub主页安装。相关链接:
-% \begin{itemize}
-% \item 主页: 有待添加
-% \end{itemize}
+% \njurepo 尚未包含于\TeX 发行版中，需要自行前往github主页：\\
+% https://github.com/zhengzangw/njurepo下载。
+%
+% \subsection{字体安装}
+% 字体存放在font文件夹中，使用模板前先自行安装。
 %
 % \subsection{模板的组成}
 % 下表列出了\njurepo 的主要文件及其功能介绍：
@@ -139,24 +140,93 @@
 % \endlastfoot
 % njurepo.ins & \textsc{DocStrip} 驱动文件（开发用） \\
 % njurepo.dtx & \textsc{DocStrip} 源文件（开发用）\\\midrule
-% njurepo.cls & 模板类文件\\\midrule
-% njurepo.sty & 为示例文档加载其它宏包\\\midrule
-% \textbf{njurepo.pdf} & 用户手册（本文档）\\\bottomrule
+% example.pdf & 实例文档\\
+% main.tex & 主文件\\
+% figs/ & 图片路径\\
+% figs/logos/ & 示例文档图片路径\\
+% fonts/ & 字体\\
+% parts/ & 具体内容\\
+% parts/examples & 示例文档具体内容\\
+% ref/ & 参考文献和参考文献样式文件\\
+% njurepo.cls & 模板类文件\\
+% \textbf{njurepo.pdf} & 用户手册（本文档）\\ \bottomrule
 % \end{longtable}
 %
+% \subsection{生成模板}
+% 使用Makefile或\XeLaTeX 生成模板文件
+% \begin{shell}
+% make cls
+% xelatex njurepo.dtx # 两句选一句即可
+% \end{shell}
+% \subsection{生成论文}
+% \subsubsection{latexmk}
+% latexmk 命令支持全自动生成\LaTeX{}编写的文档，并且支持使用不同的工具链来进行生成，它会自动运行多次工具直到交叉引用都被解决。下面给出了一个用 latexmk 调用 xelatex 生成最终文档的示例:
+% \begin{shell}
+% latexmk -xelatex main
+% \end{shell}
+% \subsubsection{make}
+% \njurepo{}提供了一个Makefile：
+% \begin{shell}
+% make clean
+% make cls # 生成 njurepo.cls
+% make doc # 生成说明文档 njurepo.pdf
+% make main # 生成示例文档main.pdf
+% \end{shell}
+% \subsection{升级}
+% 在github上下载最新版，运行:
+% \begin{shell}
+% make cls
+% \end{shell}
+% 生成新的类文件和配置文件即可。也可以直接拷贝 njurepo.cls，免去上面命令的执行。
+% 
+%
 % \section{使用说明}
+% \subsection{示例文件}
+% 推荐从模板自带的示例文档入手，其中包括了论文写作用到的所有命令及其使用方法，只需要用自己的内容进行相应替换就可以。对于不清楚的命令可以查阅本手册。下面的例子描述了模板中章节的组织形式，来自于示例文档，具体内容可以参考模板附带的 main.tex 和 parts/examples/。
+% \begin{latex}
+% \documentclass[language=english,open=any]{njurepo}
+% \begin{document}
+% \frontmatter
+% \input{parts/examples/cover}
+% \input{parts/examples/abstract}
+% \maketitlepage
+% \makecover
+% \makeabstract
+% \tableofcontents
+% \input{parts/examples/denotation}
+% \mainmatter
+% \maketitle
+% \input{parts/examples/problemsolving}
+% \input{parts/examples/mathpro}
+% \include{parts/examples/chap01}
+% \include{parts/examples/chap02}
+% \include{parts/examples/digitalexp}
+% \include{parts/examples/code}
+% \backmatter
+% \listoffigures
+% \listoftables
+% \listofequations
+% \bibliographystyle{ref/numeric} % ref/numeric,ref/author-year,plainnat,IEEEtran
+% \bibliography{ref/refs}
+% \include{parts/examples/ack}
+% %% 附录
+% \begin{appendix}
+  % \input{parts/examples/appendix01}
+% \end{appendix}
+% \end{document}
+% \end{latex}
+%
 % \subsection{选项}
 % \label{sec:option}
 % \DescribeOption{language}
-% 论文的主要语言（默认：中文）。可选：\option{chinese}，\option{english}。
-% 
-% \DescribeOption{secret}
+% 论文的主要语言（默认：中文）。可选：\option{chinese}，\option{english}。决定了封面、标题、定理的语言。
 % \DescribeOption{open}
-% 尚未添加的选择
-% \begin{itemize}
-% \item secret: 同thuthesis的设置
-% \item open: any为页面连续，right为章节奇数页
-% \end{itemize}
+% 正规出版物的章节出现在奇数页，也就是右手边的页面，这就是 \option{right}，。在这种情况下，如果前一章的最后一页也是奇数，那么模板会自动生成一个纯粹的空白页。
+% 提交的作业如果是电子稿的话，可以使用连续页，即使用\option{any}
+% \DescribeOption{wide}
+% 是否使用宽页面。如果生成作业的话，宽页面或许好看。
+% \DescribeOption{awesomefont}
+% 是否使用awesomefont图标。
 %
 % \subsection{字体配置}
 % \label{sec:font-config}
@@ -188,6 +258,44 @@
 % 如 \cs{xiaosi}[1.5] 表示选择小四字体，行距 1.5 倍。写作指南要求表格中的字体
 % 是 \cs{dawu}，模板已经设置好了。
 %
+% \subsection{封面信息}
+% 仿照parts/examples/cover.tex 进行设置
+% \subsection{问求}
+% 为问求特制了一些宏，具体可见parts/examples/problemsolving.tex 
+% \subsection{表格}
+% \begin{latex}
+%  \figpf{parameter}{filename}
+%  \figpfc{parameter}{filename}{caption}
+% \end{latex}
+% \subsection{图片}
+% \begin{latex}
+%  \tabncc{number per row}{content}{caption}
+%  \tabnc{number per row}{content}
+% \end{latex}
+% \subsection{代码}
+%预设了如下的lstlisting环境
+% \begin{longtable}{ccccc}
+% \toprule
+% code & codedisplay & cplus & shell & commandshell \\
+% verilog & python & & &\\  
+% \bottomrule
+% \end{longtable}
+% \subsection{文字}
+% \begin{latex}
+% \href{link}{words} # 插入链接
+% \magenta{品红色字}
+% \CJKunderline{下划线字}
+% \end{latex}
+% 更多的预置宏包，可见\ref{sec:loadpkg}
+%
+%
+% \section{致谢}
+% 感谢以下宏包的作者为本宏包提供了借鉴：
+% \begin{itemize}
+%  \item 清华大学\thuthesis https://github.com/xueruini/thuthesis
+%  \item 南京大学 NJUBachelor https://github.com/ZLCao/NJUBachelor
+% \end{itemize}
+% 
 % \StopEventually{}
 %
 % \section{实现细节}
@@ -252,22 +360,44 @@
 \RequirePackage{etoolbox}
 \RequirePackage{ifxetex}
 \RequirePackage{xparse}
-\RequirePackage{amsmath}
+%    \end{macrocode}
+% 用于图片的宏包
+%    \begin{macrocode}
 \RequirePackage{graphicx}
 \graphicspath{{figs/}}
 \graphicspath{{figs/logo/}}
 \RequirePackage[labelformat=simple]{subcaption}
 \RequirePackage{pdfpages}
 \includepdfset{fitpaper=true}
-\RequirePackage{CJKfntef}
-\RequirePackage[amsmath, thmmarks, hyperref]{ntheorem}
+\RequirePackage{tikz,tikzducks}
+\usetikzlibrary{decorations.pathmorphing,graphs,calc}
+\RequirePackage{dirtree}
+%    \end{macrocode}
+% 用于表格的宏包
+%    \begin{macrocode}
 \RequirePackage{array}
 \RequirePackage{longtable}
-\RequirePackage[sort&compress]{natbib}
 \RequirePackage{booktabs}
+\RequirePackage{multirow}
+\RequirePackage{bbding,stmaryrd}
+\RequirePackage{tabularx}
+\RequirePackage{diagbox}
+\RequirePackage{makecell}
+\RequirePackage{float}
+%    \end{macrocode}
+% 用于数学的宏包
+%    \begin{macrocode}
+\RequirePackage{CJKfntef}
+\RequirePackage{amsmath}
+\RequirePackage[amsmath, thmmarks, hyperref]{ntheorem}
+\RequirePackage{physics}
+%    \end{macrocode}
+% 其它宏包
+%    \begin{macrocode}
+\RequirePackage[sort&compress]{natbib}
 %    \end{macrocode}
 %
-% 超链接插入
+% 超链接
 %    \begin{macrocode}
 \RequirePackage{hyperref}
 \ifxetex
@@ -641,7 +771,7 @@
 % \end{macro}
 %
 %
-% \subsection{中文标点}
+% \subsubsection{中文标点}
 %
 % \newcommand\unicodechar[1]{U+#1（\symbol{"#1}）}
 % 由于 Unicode 的一些标点符号是中西文混用的：
@@ -1212,7 +1342,6 @@
 % \begin{macro}{\ekeywords}
 % 利用 \cs{nju@parse@keywords} 来定义，内部通过 \cs{nju@ckeywords} 和
 % \cs{nju@ekeywords} 来引用。
-% \changes{v3.1}{2007/06/16}{增强的关键词命令。}
 %    \begin{macrocode}
 \nju@parse@keywords{ckeywords}
 \nju@parse@keywords{ekeywords}
@@ -1795,7 +1924,8 @@
 %    \end{macrocode}
 % \end{environment}
 %\marginpar{这是边注}
-%\subsection{代码}
+%
+%\subsection{颜色}
 %    \begin{macrocode}
 \RequirePackage{xcolor}
 \definecolor{codegreen}{rgb}{0,0.6,0}
@@ -1811,6 +1941,13 @@
 \newcommand{\purple}[1]{\textcolor{purple}{#1}}
 \newcommand{\cyan}[1]{\textcolor{cyan}{#1}}
 \newcommand{\teal}[1]{\textcolor{teal}{#1}}
+\newcommand{\magenta}[1]{{\color{magenta}#1}}
+\newcommand{\note}[2][Note]{{%
+  \color{magenta}{\bfseries #1}\emph{#2}}}
+%    \end{macrocode}
+%
+%\subsection{代码}
+%    \begin{macrocode}
 \RequirePackage{verbatim}
 \RequirePackage{algorithm}
 \RequirePackage{algpseudocode}
@@ -1859,7 +1996,7 @@
 }
 
 \newtcblisting{commandshell}{colback=black,colupper=white,colframe=yellow!75!black, listing only,listing options={style=tcblatex,language=sh},
-every listing line={\textcolor{red}{\small\ttfamily\bfseries root \$> }}}
+every listing line={\textcolor{red}{\small\ttfamily\bfseries \$>}}}
 
 \lstdefinestyle{lstStyleShell}{%
    style=lstStyleBase,
@@ -1953,7 +2090,7 @@ every listing line={\textcolor{red}{\small\ttfamily\bfseries root \$> }}}
 	\end{figure}
 }
 %%%%%%%%%%%%%%%%%%%
-\newcommand{\tabpcc}[3]{
+\newcommand{\tabncc}[3]{
 	\begin{table}[H]
 		\centering
 		\begin{tabular}{|*{#1}{c|}}
@@ -1965,7 +2102,7 @@ every listing line={\textcolor{red}{\small\ttfamily\bfseries root \$> }}}
 	\label{form:#3}
 \end{table}}
 %%%%%%%%%%%%%%%%%%%
-\newcommand{\tabpc}[2]{
+\newcommand{\tabnc}[2]{
 	\begin{table}[H]
 		\centering
 		\begin{tabular}{|*{#1}{c|}}
@@ -1976,13 +2113,12 @@ every listing line={\textcolor{red}{\small\ttfamily\bfseries root \$> }}}
 \end{table}}
 \newcommand{\tnl}{\tabularnewline\midrule}
 %    \end{macrocode}
-% \subsection{结束部分}
-% \label{sec:finish}
+%
+% \subsection{借用dtx文件代码}
 %    \begin{macrocode}
 \def\cmd#1{\cs{\expandafter\cmd@to@cs\string#1}}
 \def\cmd@to@cs#1#2{\char\number`#2\relax}
 \DeclareRobustCommand\cs[1]{\texttt{\char`\\#1}}
-
 \newcommand*{\meta}[1]{{%
   \ensuremath{\langle}\rmfamily\itshape#1\/\ensuremath{\rangle}}}
 \providecommand\marg[1]{%
@@ -1992,35 +2128,11 @@ every listing line={\textcolor{red}{\small\ttfamily\bfseries root \$> }}}
 \providecommand\parg[1]{%
   {\ttfamily(}\meta{#1}{\ttfamily)}}
 \providecommand\pkg[1]{{\sffamily#1}}
-
-
-% 表格中支持跨行
-\RequirePackage{multirow}
-\RequirePackage{bbding,stmaryrd}
-% 固定宽度的表格
-\RequirePackage{tabularx}
-\RequirePackage{syntonly}
-\RequirePackage{dirtree}
-% 表格中的反斜线
-\RequirePackage{diagbox}
-\newcommand{\blankpage}{
-	\clearpage
-	\begin{titlepage}
-		\null\vfil
-		\begin{center}
-			\textit{This page intentionally left blank.}
-		\end{center}
-	\end{titlepage}
-}\RequirePackage{syntonly}
-\newcommand{\rmnum}[1]{\romannumeral #1}
-\newcommand{\Rmnum}[1]{\expandafter\@slowromancap\romannumeral #1@}
-% 确定浮动对象的位置，可以使用 H，强制将浮动对象放到这里（可能效果很差）
-\RequirePackage{makecell}
-\RequirePackage{physics}
-\RequirePackage{float}
-\RequirePackage{watermark} 
-\RequirePackage{tikz,tikzducks}
-\usetikzlibrary{decorations.pathmorphing,graphs,calc}
+%    \end{macrocode}
+% 
+% \subsection{水印}
+%    \begin{macrocode}
+\RequirePackage{watermark}
 \ifnju@draft
 \AtEndOfClass{
 	\watermark{% 
@@ -2038,14 +2150,29 @@ every listing line={\textcolor{red}{\small\ttfamily\bfseries root \$> }}}
   }
 }
 \fi
+%    \end{macrocode}
+%
+% \subsection{自定义代码}
+%    \begin{macrocode}
 
+\newcommand{\blankpage}{
+	\clearpage
+	\begin{titlepage}
+		\null\vfil
+		\begin{center}
+			\textit{This page intentionally left blank.}
+		\end{center}
+	\end{titlepage}
+}
+\newcommand{\rmnum}[1]{\romannumeral #1}
+\newcommand{\Rmnum}[1]{\expandafter\@slowromancap\romannumeral #1@}
+%    \end{macrocode}
+% \subsection{结束部分}
+% \label{sec:finish}
+%    \begin{macrocode}
 \AtEndOfClass{\sloppy}
 %    \end{macrocode}
 %</cls> 
-%
-%
-%
-%
 %
 %
 %
@@ -2163,9 +2290,16 @@ every listing line={\textcolor{red}{\small\ttfamily\bfseries root \$> }}}
    frame=l,
    rulecolor=\color{violet},
    language=[LaTeX]TeX}
+\lstdefinestyle{lstStylecplus}{%
+   style=lstStyleBase,
+   frame=l,
+   rulecolor=\color{blue},
+   language=C++
+ }
 
 \lstnewenvironment{latex}{\lstset{style=lstStyleLaTeX}}{}
 \lstnewenvironment{shell}{\lstset{style=lstStyleShell}}{}
+\lstnewenvironment{cplus}{\lstset{style=lstStylecplus}}{}
 
 \setlist{nosep}
 

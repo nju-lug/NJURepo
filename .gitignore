@@ -6,6 +6,7 @@ njurepo.pdf
 *.pdf
 !njurepo.pdf
 !example.pdf
+template.dtx
 *.hd
 *.bak
 *.sav

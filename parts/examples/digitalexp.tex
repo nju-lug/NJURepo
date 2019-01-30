@@ -170,7 +170,7 @@
 \subsection{逻辑指令}
 \subsubsection{基本实现}
     逻辑指令是最简单的部分，共十七条指令，列举如下（uext为对立即数进行零扩展，逻辑位移与算术位移在表中没有体现，可自行区分）
-    \tabpc{4}{
+    \tabnc{4}{
         and & rd $\leftarrow$ rs\&rt & or & rd $\leftarrow$ rs|rt \\ \hline
         xor & rd $\leftarrow$ rs xor rt & nor & rd $\leftarrow$ \!(rs xor rt) \\ \hline
         andi& rt $\leftarrow$ rs\&uext(imm) & xori & rt $\leftarrow$ rs xor uext(imm) \\ \hline 
@@ -191,7 +191,7 @@
 
 \subsection{移位指令}
     移位指令共6条如下。实现时，在译码阶段确定是否需要转移。对于hi,lo的移位操作，也需要考虑上述的数据相关问题。
-    \tabpc{4}{
+    \tabnc{4}{
         movn & rd $\leftarrow$ rs if rt$\neq$0 & movz & rd $\leftarrow$ rs if rt=0  \\ \hline
         mfhi & rd $\leftarrow$ hi & mflo & rd $\leftarrow$ lo \\ \hline
         mthi& hi $\leftarrow$ rs & mtlo & lo $\leftarrow$ rs 
@@ -199,7 +199,7 @@
 \subsection{算术指令}
 \subsubsection{基本实现}
     简单的算术指令共15条，实现时注意注意手册对指令的定义。add指令在加法溢出时不保存结果（溢出异常没有实现），addu则不进行溢出检查。其它指令也类似如此。比较特别的指令有slt保存大小比较结果以及clo保存高位1的个数，clz保存高位0的个数。
-    \tabpc{4}{
+    \tabnc{4}{
         add(u) & rd $\leftarrow$ rs+rt & sub(u) & rd $\leftarrow$ rs-rt \\ \hline
         slt(u) & rd $\leftarrow$ rs<rt & addi(u) & rd $\leftarrow$ rs+uext(imm) \\ \hline
         slti(u)& rt $\leftarrow$ rs<uext(imm) & clo & 高位连续1的个数 \\ \hline 
@@ -246,7 +246,7 @@
 
 \subsection{访存指令}
     访存过程中，我们使用IP核作为储存器，让IP核的频率为CPU的两倍，可实现同步访存。访存指令共8条如下：
-    \tabpc{4}{
+    \tabnc{4}{
         lb & 字节加载 & lbu & 无符号字节加载 \\ \hline
         lh & 半字加载 & lhu & 半字无符号加载 \\ \hline
         lw & 字加载 & sw & 字储存 \\ \hline 
