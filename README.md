@@ -143,7 +143,7 @@ essay: 报告/论文格式
 | algorithm | 伪代码 | `algorithm` 环境 |
 | algpseudocode | 伪代码 | `algorithmic` 环境 |
 | verbatim | 无格式文本 | `verbatim` 环境 |
-| fontawesome | 字体 | |
+| fontawesome | 字体 | You need to include this by yourself if you want|
 
 ### 默认加载的 tikz library
 
