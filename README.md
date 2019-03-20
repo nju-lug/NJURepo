@@ -29,13 +29,13 @@ Github 版本中同时包含了一个 Makefile 文件和 util.py 文件。这两
 
 ### 生成学科项目
 
-parts 下每个文件夹代表着一个项目，每个项目由 cover.tex 配置文件和若干源文件组成。可以手动添加文件夹和配置文件，也可以使用命令 `python util.py -c project_name`
+parts 下每个文件夹代表着一个项目，每个项目由 cover.tex 配置文件和若干源文件组成。可以手动添加文件夹和配置文件，也可以使用命令 `python util.py -c project_name` 生成
 
 生成完成后按提示配置 cover.tex。对于小作业而言，只需填需要的几个，其它全部留空即可
 
 ### 选择格式
 
-Makefile 中内置了两个格式，可以通过 `python util.py -g single -n project-name -s one-single-file` 自动生成 single 格式，通过 `python util.py -g essay -n project-name` 自动生成 essay 格式
+Makefile 中内置了两个格式，可以通过 `python util.py -g single -n project-name -s one-single-file` 或 `make PROJECT=project-name NAME=one-single-file generate` 自动生成 single 格式，通过 `python util.py -g essay -n project-name` 或 `make PROJECT=project-name TYPE=essay generate` 自动生成 essay 格式
 
 single: 默认格式
 
@@ -79,13 +79,11 @@ essay: 报告/论文格式
 
 ### 生成文档
 
-Essay 模式可以先生成，适当更改后，使用 `make main TARGET=project-name` 或 `latexmk -xelatex main.tex` 来生成文档。
-
-Single 模式则在直接完成单个文件后，使用 `make TARGET=project-name MAIN=single-file-name` 来自动生成主文件并生成文档
+模板生成后，使用 `make PROJECT=project-name TYPE=essay` 及 `make PROJECT=project-name NAME=one-single-file` 来更新输出文档。
 
 ### 清理文件
 
-`make all` 将在完成后自动清理过程文件，只留下 `.tex` 和 `.pdf` 文件  
+`make all PROJECT=project-name NAME=one-single-file` 将在完成后自动清理过程文件，只留下 `.tex` 和 `.pdf` 文件    
 `make distclean` 帮助删除主目录下所有 `.tex` 和 `.pdf` 文件
 
 ## 选项
@@ -96,6 +94,7 @@ Single 模式则在直接完成单个文件后，使用 `make TARGET=project-nam
 * open: 正规出版物的章节出现在奇数页，也就是右手边的页面。选择 `open=any` 时，如果前一章的最后一页也是奇数，那么模板会自动生成一个纯粹的空白页。
   * any
   * right
+* wide: 生成宽页面（可在作业时使用）
 * draft: 生成 Draft 水印
 
 ## 默认加载的宏包
@@ -170,6 +169,7 @@ Single 模式则在直接完成单个文件后，使用 `make TARGET=project-nam
 * `\tabnc{number-of-columns}{content}` 制作简易 n 列居中表格
 * `\inlinecite{}` 行内引用
 * `\cite` 普通引用
+* `\rom{2}` 罗马数字
 
 ## Contact
 

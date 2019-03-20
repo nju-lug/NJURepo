@@ -73,7 +73,7 @@
 % \changes{v1.0.1}{2019/01/29}{Add more ability}
 % \changes{v1.1.0}{2019/01/29}{Stable version}
 % \changes{v1.1.1}{2019/01/22}{Fix little bugs}
-% \changes{v1.1.2}{2019/01/22}{Fix some typo and add more predined macro}
+% \changes{v1.1.2}{2019/01/22}{Fix some typo and add more predined macro. Polish manual}
 %
 % \GetFileInfo{\jobname.dtx}
 %
@@ -100,7 +100,7 @@
 % \item 本模板的发布遵守 \LaTeX\ Project Public License，使用前请认真阅读协议内
 %   容。
 % \item \textbf{本模板为作者自己通常使用的报告模板，与南京大学官方没有任何关系}。任何使用该宏包进行实验报告制作时，请\textbf{务必根据课程要求进行写作}。由于使用本模板而引起的作业验收问题，均与本模板作者无关。
-% \item 本模板借鉴\thuthesis{}宏包的大量内容，需要稳定模板的同学也可以选择使用清华大学的\thuthesis{}宏包并自己进行配置。
+% \item 本模板借鉴\thuthesis{}宏包的许多内容，需要稳定模板的同学也可以选择使用清华大学的\thuthesis{}宏包并自己进行配置。
 % \item 任何个人或组织以本模板为基础进行修改、扩展而生成的新的专用模板，请严格遵
 %   守 \LaTeX\ Project Public License 协议。由于违犯协议而引起的任何纠纷争端均与
 %   本模板作者无关。
@@ -117,16 +117,24 @@
 % \clearpage
 %
 % \section{模板介绍}
-% \njurepo\ (\textbf{N}an\textbf{jing} \textbf{U}niversity \LaTeX\ Versatile \textbf{Repo}rt Template)是根据作者用\LaTeX{}制作南京大学课程实验报告的模板文件，可帮助本科生快速的制作实验报告和作业。
+% \njurepo\ (\textbf{N}an\textbf{jing} \textbf{U}niversity \LaTeX\ Versatile \textbf{Repo}rt Template)是为南京大学本科生设计的一个免于配置的作业、实验报告模板。希望它可以使你的作业/实验报告不会因形式上的缺陷导致评分的下降。
+%
+% 该文档格式基于 ctexbook, 主要完成了除了主体内容以外的几乎\textbf{全部}工作。同时，通过使用 Github 版本宏包，你还可以更好的管理自己的 $\LaTeX$ 文档。
+%
 % 本文档将尽量完整的介绍模板的使用方法，如有不清楚之处可以参考示例文档或者根据第 3.1 节说明提问，有兴趣者都可以参与完善此手册，也非常欢迎对代码的贡献。
 % 
 % \section{安装}
 % \label{sec:installation}
 % \subsection{CTAN}
-% 本宏包已被收纳于 CTAN 中，凡安装完整版 Texlive 用户可直接使用 \begin{latex} \usepackage{njurepo} \end{latex}
-% 进行使用
+% 本宏包已被收纳于 CTAN 中，凡安装完整版 Texlive 用户可直接使用：
+% \begin{latex} 
+% \usepackage{njurepo} 
+% \end{latex}
+%
 % \subsection{Github}
-% 想获得最新版本的 \njurepo 请前往github主页下载：https://github.com/zhengzangw/njurepo 
+% 想获得最新版本的 \njurepo 请前往 Github 主页下载：https://github.com/zhengzangw/njurepo 
+% 
+% 同时，面向 Github 版本的说明主要在 README.md 中，如果使用的是 Github 版本，请阅读 README.md
 %
 % \subsection{模板的组成}
 % 下表列出了\njurepo 的主要文件及其功能介绍：
@@ -142,15 +150,15 @@
 % \endlastfoot
 % njurepo.ins & \textsc{DocStrip} 驱动文件（开发用） \\
 % njurepo.dtx & \textsc{DocStrip} 源文件（开发用）\\\midrule
-% example.pdf & 实例文档\\
-% main.tex & 主文件\\
-% figs/ & 图片路径\\
-% figs/logos/ & 示例文档图片路径\\
-% fonts/ & 字体\\
+% resources/ & 资源路径\\
+% resources/logos/ & 示例文档资源路径\\
 % parts/ & 具体内容\\
 % parts/examples/ & 示例文档具体内容\\
 % ref/ & 参考文献和参考文献样式文件\\
 % njurepo.cls & 模板类文件\\
+% Makefile & 自动运行脚本 \\
+% util.py & 实用管理工具 \\
+% README.md & 说明文件 \\
 % \textbf{njurepo.pdf} & 用户手册（本文档）\\ \bottomrule
 % \end{longtable}
 %
@@ -158,27 +166,21 @@
 % 使用Makefile或\XeLaTeX 生成模板文件
 % \begin{shell}
 % make cls
-% xelatex njurepo.dtx # 两句选一句即可
 % \end{shell}
+%
 % \subsection{生成论文}
 % \subsubsection{latexmk}
 % latexmk 命令支持全自动生成\LaTeX{}编写的文档，并且支持使用不同的工具链来进行生成，它会自动运行多次工具直到交叉引用都被解决。下面给出了一个用 latexmk 调用 xelatex 生成最终文档的示例:
 % \begin{shell}
 % latexmk -xelatex main
 % \end{shell}
-% \subsubsection{make}
-% \njurepo{}提供了一个Makefile：
-% \begin{shell}
-% make clean
-% make cls # 生成 njurepo.cls
-% make doc # 生成说明文档 njurepo.pdf
-% make main # 生成示例文档main.pdf
-% \end{shell}
+%
 % \subsection{升级}
 % 在github上下载最新版，运行:
 % \begin{shell}
 % make cls
 % \end{shell}
+%
 % 生成新的类文件和配置文件即可。也可以直接拷贝 njurepo.cls，免去上面命令的执行。
 % 
 %
@@ -227,8 +229,8 @@
 % 提交的作业如果是电子稿的话，可以使用连续页，即使用\option{any}
 % \DescribeOption{wide}
 % 是否使用宽页面。如果生成作业的话，宽页面或许好看。
-% \DescribeOption{awesomefont}
-% 是否使用awesomefont图标。
+% \DescribeOption{draft}
+% 是否生成水印。生成的水印为 Draft 表示此文档尚为草稿
 %
 % \subsection{字体配置}
 % \label{sec:font-config}
@@ -263,21 +265,27 @@
 % \subsection{封面信息}
 % 仿照parts/examples/cover.tex 进行设置
 % \subsection{表格}
+% \DescribeMacro{\figoptadd}
+% \DescribeMacro{\figoptaddcap}
+% 定义了两个简单的表格命令
 % \begin{latex}
-%  \figpf{parameter}{filename}
-%  \figpfc{parameter}{filename}{caption}
+%  \figoptadd{option}{address}
+%  \figoptaddcap{option}{address}{caption}
 % \end{latex}
 % \subsection{图片}
+% \DescribeMacro{\tabncc}
+% \DescribeMacro{\tabnc}
+% 定义了两个简单的图片命令
 % \begin{latex}
-%  \tabncc{number per row}{content}{caption}
-%  \tabnc{number per row}{content}
+%  \tabncc{number-of-columns}{content}{caption}
+%  \tabnc{number-of-columns}{content}
 % \end{latex}
 % \subsection{代码}
-%预设了如下的lstlisting环境
+% \njurepo 预设了如下的代码环境
 % \begin{longtable}{ccccc}
 % \toprule
-% code & codedisplay & cplus & shell & commandshell \\
-% verilog & python & & &\\  
+% code & cpseudo & cplus & shell & commandshell \\
+% verilog & python & latex & &\\  
 % \bottomrule
 % \end{longtable}
 % \subsection{文字}
@@ -286,7 +294,7 @@
 % \magenta{品红色字}
 % \CJKunderline{下划线字}
 % \end{latex}
-% 更多的预置宏包，可见\ref{sec:loadpkg}
+% 更多关于预置宏包的内容，可见 README.md 以及 \ref{sec:loadpkg}
 %
 %
 % \section{致谢}
@@ -324,7 +332,6 @@
 \DeclareBoolOption{wide}
 \DeclareBoolOption{color}
 \DeclareBoolOption{draft}
-\DeclareBoolOption{awesomefont}
 \DeclareDefaultOption{\PassOptionsToClass{\CurrentOption}{ctexbook}}
 
 \ProcessKeyvalOptions*
@@ -2153,8 +2160,9 @@ every listing line={\textcolor{red}{\small\ttfamily\bfseries \$>}}}
 %    \begin{macrocode}
 \renewcommand{\thesection}{\arabic{section}}
 \newcommand{\nchapter}[1]{
-  {\let\clearpage\relax\par\vspace{1cm} \chapter*{#1}}
+  {\let\clearpage\relax\par\vspace{1cm} \chapter*{\LARGE#1}}
 }
+\newcommand*{\rom}[1]{\expandafter\@slowromancap\romannumeral #1@}
 %    \end{macrocode}
 %
 % \subsection{自定义代码}

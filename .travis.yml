@@ -34,7 +34,7 @@ install:
     fp multirow notoccite ntheorem pdfpages pict2e unicode-math xcolor zapfding
     fontaxes kastrup listings lm metalogo newpx newtx palatino pxfonts thumbpdf
     txfonts xkeyval tcolorbox
-  - tlmgr install tikz
+  - tlmgr install pgf tikz-cd
 
 script:
   - make TARGET=ps MAIN=problemsolving

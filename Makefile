@@ -5,13 +5,13 @@
 METHOD = latexmk
 LATEXMKOPTS = -xelatex -file-line-error -halt-on-error -interaction=nonstopmode
 
-TARGET?=examples
+PROJECT?=examples
 PACKAGE=njurepo
-MAIN?=main
+NAME?=main
 TYPE?=single
 
 SOURCES= $(PACKAGE).ins $(PACKAGE).dtx
-CONTENTS= $(MAIN).tex parts/$(TARGET)/*.tex
+CONTENTS= $(NAME).tex parts/$(PROJECT)/*.tex
 BIBFILE=ref/*.bib
 BSTFILE=*.bst
 CLSFILES=dtx-style.sty $(PACKAGE).cls
@@ -25,7 +25,7 @@ else
 	OPEN = open
 endif
 
-.PHONY: all clean distclean main texdoc cls texdoc single FORCE_MAKE
+.PHONY: all generate create main texdoc cls FORCE_MAKE clean distclean
 
 all: cls main clean
 
@@ -35,37 +35,37 @@ texdoc: $(PACKAGE).pdf
 	$(OPEN) $(PACKAGE).pdf
 	latexmk -c $(PACKAGE).dtx
 
-main: $(MAIN).pdf
+main: $(NAME).pdf
+
+create:
+	python util.py -c $(PROJECT)
+
+ifeq ($(TYPE),single)
+generate:
+	python util.py -g single -n $(PROJECT) -s $(NAME)
+else ifeq ($(TYPE),essay)
+generate:
+	python util.py -g essay -n $(PROJECT)
+else
+$(error Unknown TYPE: $(TYPE))
+endif
 
 $(CLSFILES): $(SOURCES)
 	xelatex $(PACKAGE).ins
 
 ifeq ($(METHOD),latexmk)
-
 $(PACKAGE).pdf: $(SOURCES) $(CLSFILES) FORCE_MAKE
 	$(METHOD) $(LATEXMKOPTS) $(PACKAGE).dtx
-
-$(MAIN).pdf: $(CONTENTS) $(CLSFILES) FORCE_MAKE
-	$(METHOD) $(LATEXMKOPTS) $(MAIN)
-
-ifeq ($(TYPE),single)
-$(MAIN).tex: FORCE_MAKE
-	python util.py -g single -n $(TARGET) -s $(MAIN)
-else ifeq ($(TYPE),essay)
-$(MAIN).tex: FORCE_MAKE
-	python util.py -g essay -n $(TARGET)
-else
-$(error Unknown TYPE: $(TYPE))
-endif
-
+$(NAME).pdf: $(CONTENTS) $(CLSFILES) FORCE_MAKE
+	$(METHOD) $(LATEXMKOPTS) $(NAME)
 else
 $(error Unknown METHOD: $(METHOD))
 endif
 
 clean:
-	latexmk -c $(PACKAGE).dtx $(MAIN) 
+	latexmk -c $(PACKAGE).dtx $(NAME) 
 	-@$(RM) parts/*.aux
-	-@$(RM) parts/$(TARGET)/*.aux
+	-@$(RM) parts/$(PROJECT)/*.aux
 	-@$(RM) *~
 
 distclean:
