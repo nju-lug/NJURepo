@@ -1,4 +1,5 @@
 ![Version](https://img.shields.io/badge/version-1.1.2-blue.svg)
+![Status](https://travis-ci.org/zhengzangw/njurepo.svg?branch=master)
 
 # What's NJUrepo
 

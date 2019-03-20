@@ -37,4 +37,4 @@ install:
   - tlmgr install pgf tikz-cd
 
 script:
-  - make TARGET=ps MAIN=problemsolving
+  - make PROJECT=ps NAME=problemsolving
