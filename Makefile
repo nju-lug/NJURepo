@@ -1,18 +1,20 @@
 
 # Makefile for njurepo
 
-# Compiling method: latex/xelatex
+# Compiling method: xelatex
 METHOD = latexmk
 LATEXMKOPTS = -xelatex -file-line-error -halt-on-error -interaction=nonstopmode
 
-EXAMPLE= main
-PACKAGE= njurepo
+TARGET?=examples
+PACKAGE=njurepo
+MAIN?=main
+TYPE?=single
+
 SOURCES= $(PACKAGE).ins $(PACKAGE).dtx
-EXAMPLECONTENTS= $(EXAMPLE).tex mains/*.tex $(FIGURES)
-FIGURES=$(wildcard figures/*.pdf)
+CONTENTS= $(MAIN).tex parts/$(TARGET)/*.tex
 BIBFILE=ref/*.bib
 BSTFILE=*.bst
-CLSFILES=dtx-style.sty $(PACKAGE).cls $(PACKAGE).cfg
+CLSFILES=dtx-style.sty $(PACKAGE).cls
 
 # make deletion work on Windows
 ifdef SystemRoot
@@ -23,65 +25,50 @@ else
 	OPEN = open
 endif
 
-.PHONY: all clean distclean main doc cls texdoc viewmain FORCE_MAKE
+.PHONY: all clean distclean main texdoc cls texdoc single FORCE_MAKE
 
-all: doc main 
+all: cls main clean
 
 cls: $(CLSFILES)
+
+texdoc: $(PACKAGE).pdf
+	$(OPEN) $(PACKAGE).pdf
+	latexmk -c $(PACKAGE).dtx
+
+main: $(MAIN).pdf
 
 $(CLSFILES): $(SOURCES)
 	xelatex $(PACKAGE).ins
 
-viewdoc: doc
-	$(OPEN) $(PACKAGE).pdf
-
-doc: $(PACKAGE).pdf
-
-viewmain: main
-	$(OPEN) $(EXAMPLE).pdf
-
-main: $(EXAMPLE).pdf
-
 ifeq ($(METHOD),latexmk)
 
-$(PACKAGE).pdf: $(CLSFILES) $(EXAMPLE) FORCE_MAKE
+$(PACKAGE).pdf: $(SOURCES) $(CLSFILES) FORCE_MAKE
 	$(METHOD) $(LATEXMKOPTS) $(PACKAGE).dtx
 
-$(EXAMPLE).pdf: $(CLSFILES) FORCE_MAKE
-	$(METHOD) $(LATEXMKOPTS) $(EXAMPLE)
+$(MAIN).pdf: $(CONTENTS) $(CLSFILES) FORCE_MAKE
+	$(METHOD) $(LATEXMKOPTS) $(MAIN)
 
-else ifneq (,$(filter $(METHOD),xelatex pdflatex))
-
-$(PACKAGE).pdf: $(CLSFILES) $(EXAMPLE).tex
-	$(METHOD) $(PACKAGE).dtx
-	makeindex -s gind.ist -o $(PACKAGE).ind $(PACKAGE).idx
-	makeindex -s gglo.ist -o $(PACKAGE).gls $(PACKAGE).glo
-	$(METHOD) $(PACKAGE).dtx
-	$(METHOD) $(PACKAGE).dtx
-
-$(EXAMPLE).pdf: $(CLSFILES) $(THESISCONTENTS) $(EXAMPLE).bbl
-	$(METHOD) $(EXAMPLE)
-	$(METHOD) $(EXAMPLE)
-
-$(EXAMPLE).bbl: $(BIBFILE) $(BSTFILE)
-	$(METHOD) $(EXAMPLE)
-	-bibtex $(EXAMPLE)
-	$(RM) $(EXAMPLE).pdf
+ifeq ($(TYPE),single)
+$(MAIN).tex: FORCE_MAKE
+	python util.py -g single -n $(TARGET) -s $(MAIN)
+else ifeq ($(TYPE),essay)
+$(MAIN).tex: FORCE_MAKE
+	python util.py -g essay -n $(TARGET)
+else
+$(error Unknown TYPE: $(TYPE))
+endif
 
 else
 $(error Unknown METHOD: $(METHOD))
-
 endif
 
 clean:
-	latexmk -c $(PACKAGE).dtx $(EXAMPLE) 
+	latexmk -c $(PACKAGE).dtx $(MAIN) 
 	-@$(RM) parts/*.aux
-	-@$(RM) parts/examples/*.aux
+	-@$(RM) parts/$(TARGET)/*.aux
 	-@$(RM) *~
 
-cleanall: clean
-	-@$(RM) $(PACKAGE).pdf $(EXAMPLE).pdf 
-
-distclean: cleanall
+distclean:
+	-@$(RM) *.pdf *.tex
 	-@$(RM) $(CLSFILES)
 	-@$(RM) -r dist

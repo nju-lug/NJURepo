@@ -1,0 +1,105 @@
+\maketitle
+\begin{nproblem}[3.4]
+\end{nproblem}
+\begin{nsolution}
+\begin{table}[H]
+    \begin{tabular}{c|cccccccc}
+        音符 & C & D & E & F & G & A & B & C \\ \hline
+        频率 & 264 & 297 & 330 & 352 & 396 & 440 & 495 & 528 \\
+        波长 & 1.25 & 1.11 & 1 & 0.9375 & 0.833 & 0.75 & 0.67 & 0.625 \\
+    \end{tabular}
+\end{table}
+
+根据图表，从左到右，频率变大，波长变小。
+\end{nsolution}
+
+\begin{nproblem}[3.5]
+\end{nproblem}
+\begin{nsolution}
+    \[2sin(4\pi t),A=2,f=2,\phi=\pi\]
+\end{nsolution}
+
+\begin{nproblem}[3.6]
+\end{nproblem}
+\begin{nsolution}
+    \[0.05\sin(95t+\frac{\pi}{2})+\sin(100t+\frac{\pi}{2})+0.05\cos(105t+\frac{\pi}{2})\]
+\end{nsolution}
+
+\begin{nproblem}[3.12]
+\end{nproblem}
+\begin{nsolution}
+    \begin{itemize}
+        \item[a] $25*512*512*8=52428800\text{b}$
+        \item[b] $512*512*8*30=62914560\text{bps}$
+        \item[c] $25*512*512*8*30/8=196608000\text{Byte}$  
+    \end{itemize}
+\end{nsolution}
+
+\begin{nproblem}[3.13]
+\end{nproblem}
+\begin{nsolution}
+    \begin{itemize}
+        \item[a] $480*500*\log_232*30=3.6*10^7\text{bps}$
+        \item[b] $\text{SNR}_{dB}=3.5dB=\lg(\text{SNR})\Rightarrow \text{SNR}=10^{3.5}$.
+        $C=B\log_2(1+10^{3.5})= 52.2\text{MHz}$
+        \item[c] 仍需5比特传输，传输速率为 $36\text{Mbps}$
+    \end{itemize}
+\end{nsolution}
+
+\begin{nproblem}[3.16]
+\end{nproblem}
+\begin{nsolution}
+    \begin{itemize}
+        \item 由奈奎斯特定理， $9600bps=2*B*4$. $B=1200\text{Hz}$
+        \item $B=600\text{Hz}$
+    \end{itemize}
+\end{nsolution}
+
+\begin{nproblem}[3.18]
+\end{nproblem}
+\begin{nsolution}
+    \begin{itemize}
+        \item $C=B\log_2(1+\text{SNR})=3100\text{Hz}*\log_2(400000)=57.7\text{kbps}$
+        \item 由于存在衰减、时延失真等现象，实际的最大信道容量将小于该理论值。
+    \end{itemize}
+\end{nsolution}
+
+\begin{nproblem}[3.20]
+\end{nproblem}
+\begin{nsolution}
+    \begin{itemize}
+        \item $C=1\text{MHz}*\log_2(64)=6\text{Mbps}$
+        \item $M=2^\frac{C}{2B}=2^2=4$
+    \end{itemize}
+\end{nsolution}
+
+\begin{nproblem}[3.21]
+\end{nproblem}
+\begin{nsolution}
+    \[C=B\log_2(1+\text{SNR})\Rightarrow \text{SNR}=100.6\]
+\end{nsolution}
+
+\begin{nproblem}[3.22]
+\end{nproblem}
+\begin{nsolution}
+    $f=1\text{kHz}$，故允许 $k=1,3,5,7$ 的波通过。$P=\frac{4}{\pi}^2\frac{1}{2}*(1+\frac{1}{9}+\frac{1}{25}+\frac{1}{49})=0.95\text{W}$
+
+    $SNR=\frac{0.95}{0.1*10^{-3}}=9500$, $SNR_{dB}=10\lg(SNR)=39.7\text{dB}$
+\end{nsolution}
+
+\begin{nproblem}[3.24]
+\end{nproblem}
+\begin{nsolution}
+    以符号表达香农的这段话，$l$ 为报文长度，本质普宽度为 $B$，报文的传输时间为 $T$，$K$ 为常数
+    \[\frac{l*E}{\text{loss}}< T*B*K\]
+    注意到 $\frac{l}{T}$ 近似于 $C$。故有
+    \[C< BK\]
+    即给出了信道容量的一个上界。式 (3.1) 同样也是给出了一个信道容量的上界。 
+\end{nsolution}
+
+\begin{nproblem}[3.26]
+\end{nproblem}
+\begin{nsolution}
+    \[30=20\lg\frac{V_{out}}{V_{in}}\]
+    故代表电压比值为 $31.6:1$
+\end{nsolution}

@@ -72,6 +72,7 @@
 % \changes{v1.0.0}{2019/01/22}{Initial version}
 % \changes{v1.0.1}{2019/01/29}{Add more ability}
 % \changes{v1.1.0}{2019/01/29}{Stable version}
+% \changes{v1.1.1}{2019/01/22}{Fix some typo and add more predined macro}
 %
 % \GetFileInfo{\jobname.dtx}
 %
@@ -80,7 +81,7 @@
 % \IndexPrologue{\section{\indexname}}
 % \GlossaryPrologue{\section{\glossaryname}}
 
-% \title{\bfseries\color{violet}\njurepo： 南京大学本科生范用报告}
+% \title{\bfseries\color{violet}\njurepo： 南京大学本科生泛用报告}
 % \author{郑奘巍 \\[5pt]\texttt{zhengzangw@gmail.com}}
 % \date{\fileversion\ (\filedate)}
 % \maketitle\thispagestyle{empty}
@@ -120,11 +121,11 @@
 % 
 % \section{安装}
 % \label{sec:installation}
-% \njurepo 尚未包含于\TeX 发行版中，需要自行前往github主页：\\
-% https://github.com/zhengzangw/njurepo下载。
-%
-% \subsection{字体安装}
-% 字体存放在font文件夹中，使用模板前先自行安装。
+% \subsection{CTAN}
+% 本宏包已被收纳于 CTAN 中，凡安装完整版 Texlive 用户可直接使用 \begin{latex} \usepackage{njurepo} \end{latex}
+% 进行使用
+% \subsection{Github}
+% 想获得最新版本的 \njurepo 请前往github主页下载：https://github.com/zhengzangw/njurepo 
 %
 % \subsection{模板的组成}
 % 下表列出了\njurepo 的主要文件及其功能介绍：
@@ -146,7 +147,7 @@
 % figs/logos/ & 示例文档图片路径\\
 % fonts/ & 字体\\
 % parts/ & 具体内容\\
-% parts/examples & 示例文档具体内容\\
+% parts/examples/ & 示例文档具体内容\\
 % ref/ & 参考文献和参考文献样式文件\\
 % njurepo.cls & 模板类文件\\
 % \textbf{njurepo.pdf} & 用户手册（本文档）\\ \bottomrule
@@ -260,8 +261,6 @@
 %
 % \subsection{封面信息}
 % 仿照parts/examples/cover.tex 进行设置
-% \subsection{问求}
-% 为问求特制了一些宏，具体可见parts/examples/problemsolving.tex 
 % \subsection{表格}
 % \begin{latex}
 %  \figpf{parameter}{filename}
@@ -290,10 +289,9 @@
 %
 %
 % \section{致谢}
-% 感谢以下宏包的作者为本宏包提供了借鉴：
+% 感谢以下宏包的作者，本宏包从中使用了部分代码和借鉴：
 % \begin{itemize}
 %  \item 清华大学\thuthesis https://github.com/xueruini/thuthesis
-%  \item 南京大学 NJUBachelor https://github.com/ZLCao/NJUBachelor
 % \end{itemize}
 % 
 % \StopEventually{}
@@ -364,12 +362,12 @@
 % 用于图片的宏包
 %    \begin{macrocode}
 \RequirePackage{graphicx}
-\graphicspath{{figs/}}
-\graphicspath{{figs/logo/}}
+\graphicspath{{resources/}}
+\graphicspath{{resources/logo/}}
 \RequirePackage[labelformat=simple]{subcaption}
 \RequirePackage{pdfpages}
 \includepdfset{fitpaper=true}
-\RequirePackage{tikz,tikzducks}
+\RequirePackage{tikz}
 \usetikzlibrary{decorations.pathmorphing,graphs,calc}
 \RequirePackage{dirtree}
 %    \end{macrocode}
@@ -379,18 +377,19 @@
 \RequirePackage{longtable}
 \RequirePackage{booktabs}
 \RequirePackage{multirow}
-\RequirePackage{bbding,stmaryrd}
 \RequirePackage{tabularx}
 \RequirePackage{diagbox}
 \RequirePackage{makecell}
 \RequirePackage{float}
 %    \end{macrocode}
-% 用于数学的宏包
+% 用于符号或数学的宏包
 %    \begin{macrocode}
 \RequirePackage{CJKfntef}
 \RequirePackage{amsmath}
 \RequirePackage[amsmath, thmmarks, hyperref]{ntheorem}
 \RequirePackage{physics}
+\RequirePackage{bbding,stmaryrd}
+\RequirePackage{fontawesome}
 %    \end{macrocode}
 % 其它宏包
 %    \begin{macrocode}
@@ -532,7 +531,7 @@
   ]{texgyrecursor}
 }{
   \setmainfont{Times New Roman}
-  \setsansfont{Arial}[SmallCapsFont=spinweradCBold]
+  \setsansfont{Arial}
   \ifthenelse{\equal{\nju@fontset}{mac}}{
     \setmonofont[Scale=MatchLowercase]{Menlo}
   }{
@@ -917,10 +916,10 @@
 \theoremheaderfont{\normalfont\heiti}
 \theoremsymbol{\ensuremath{\square}}
 \newtheorem*{proof}{证明}
-\theoremstyle{plain}
 \theoremsymbol{}
 \theoremseparator{：}
 \ifnju@chinese
+  \theoremstyle{plain}
   \newcommand\nju@assumption@name{假设}
   \newcommand\nju@definition@name{定义}
   \newcommand\nju@proposition@name{命题}
@@ -931,10 +930,12 @@
   \newcommand\nju@exercise@name{练习}
   \newcommand\nju@example@name{例}
   \newcommand\nju@remark@name{注释}
-  \newcommand\nju@problem@name{问题}
   \newcommand\nju@conjecture@name{猜想}
+  \theoremstyle{break}
+  \newcommand\nju@problem@name{问题}
   \newcommand\nju@solution@name{解}
 \else
+  \theoremstyle{plain}
   \newcommand\nju@assumption@name{Assumption}
   \newcommand\nju@definition@name{Definition}
   \newcommand\nju@proposition@name{Proposition}
@@ -945,24 +946,25 @@
   \newcommand\nju@exercise@name{Exercise}
   \newcommand\nju@example@name{Example}
   \newcommand\nju@remark@name{Remark}
-  \newcommand\nju@problem@name{Problem}
   \newcommand\nju@conjecture@name{Conjecture}
+  \theoremstyle{break}
+  \newcommand\nju@problem@name{Problem}
   \newcommand\nju@solution@name{Solution}
 \fi
 \theoremheaderfont{\bfseries}
-\newtheorem{assumption}{\nju@assumption@name}[chapter]
-\newtheorem{definition}{\nju@definition@name}[chapter]
-\newtheorem{proposition}{\nju@proposition@name}[chapter]
-\newtheorem{lemma}{\nju@lemma@name}[chapter]
-\newtheorem{theorem}{\nju@theorem@name}[chapter]
-\newtheorem{axiom}{\nju@axiom@name}[chapter]
-\newtheorem{corollary}{\nju@corollary@name}[chapter]
-\newtheorem{exercise}{\nju@exercise@name}[chapter]
-\newtheorem{example}{\nju@example@name}[chapter]
-\newtheorem{remark}{\nju@remark@name}[chapter]
-\newtheorem{problem}{\nju@problem@name}[chapter]
-\newtheorem{conjecture}{\nju@conjecture@name}[chapter]
-\newtheorem{solution}{\nju@solution@name}[chapter]
+\newtheorem{assumption}{\nju@assumption@name}[section]
+\newtheorem{definition}{\nju@definition@name}[section]
+\newtheorem{proposition}{\nju@proposition@name}[section]
+\newtheorem{lemma}{\nju@lemma@name}[section]
+\newtheorem{theorem}{\nju@theorem@name}[section]
+\newtheorem{axiom}{\nju@axiom@name}[section]
+\newtheorem{corollary}{\nju@corollary@name}[section]
+\newtheorem{exercise}{\nju@exercise@name}[section]
+\newtheorem{example}{\nju@example@name}[section]
+\newtheorem{remark}{\nju@remark@name}[section]
+\newtheorem{problem}{\nju@problem@name}[section]
+\newtheorem{conjecture}{\nju@conjecture@name}[section]
+\newtheorem{solution}{\nju@solution@name}[section]
 
 %\RequirePackage{microtype}
 \ifnju@chinese
@@ -970,25 +972,20 @@
 \else
 \newcommand{\promisewords}{I promise this work is done on my own with no plagiarism.}
 \fi
-\newcommand{\pshw}{\section*{\scshape Part I\ \ \ Homework}}
-\newcommand{\pscr}{\section*{\scshape Part II\ \ \ Correction}}
-\newcommand{\psfb}{\section*{\scshape Part III\ \ \ Feedback}}
 \newcommand{\Hrule}{\noindent\rule{\linewidth}{0.5mm}}
 
-\ifnju@awesomefont
-\RequirePackage{awesomefont}
-\fi
-
 \theorempostwork{\vspace{-0.5cm}\Hrule}
-\newtheorem*{pssolution}{\ifnju@awesomefont\faPencilSquareO\ \fi\nju@solution@name}
+\newtheorem*{csolution}{\PencilRightDown\nju@solution@name}
+\newtheorem*{nsolution}{\PencilRightDown\nju@solution@name}
 \RequirePackage[listings]{tcolorbox}
 \newtcolorbox{ps@problem}[1]{fonttitle=\bfseries,title=#1,before skip=0.5cm, after skip=-0.5cm}
-\newenvironment{psproblem}[1][]{
-    \begin{ps@problem}{\ifnju@awesomefont\faQuestionCircle\ \fi\nju@problem@name\ #1}
+\newenvironment{cproblem}[1][]{
+    \begin{ps@problem}{\Checkmark\ \nju@problem@name\ #1}
 }{
     \end{ps@problem}
 }
-%
+\theoremstyle{plain}
+\newtheorem*{nproblem}{\Checkmark\nju@problem@name}[section]
 % \subsubsection{浮动对象}
 % \label{sec:float}
 % 设置浮动对象和文字之间的距离
@@ -1116,7 +1113,7 @@
 %
 % 各级标题格式设置。
 % \begin{description}
-% \item[chapter] 章序号与章名之间空一个汉字符 黑体三号字，居中书写，单倍行距，段
+% \item[section] 章序号与章名之间空一个汉字符 黑体三号字，居中书写，单倍行距，段
 %   前空 24 磅，段后空 18 磅。本科要求：段前段后间距 30/20 pt，行距 20pt。但正文
 %   章节 30pt 的话和样例效果不一致。
 % \item[section] 一级节标题，例如：\fbox{2.1 实验装置与实验方法}。节标题序号与标
@@ -2150,6 +2147,13 @@ every listing line={\textcolor{red}{\small\ttfamily\bfseries \$>}}}
   }
 }
 \fi
+%    \end{macrocode}
+% 补丁
+%    \begin{macrocode}
+\renewcommand{\thesection}{\arabic{section}}
+\newcommand{\nchapter}[1]{
+  {\let\clearpage\relax\par\vspace{1cm} \chapter*{#1}}
+}
 %    \end{macrocode}
 %
 % \subsection{自定义代码}

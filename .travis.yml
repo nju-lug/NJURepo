@@ -36,5 +36,4 @@ install:
     txfonts xkeyval tcolorbox tikz
 
 script:
-  - make main
-  - make doc
+  - make TARGET=ps MAIN=problemsolving

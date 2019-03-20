@@ -1,25 +1,147 @@
-![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.1.1-blue.svg)
 
-# What's NJUrepo?
-NJUrepo stands for <b>N</b>an<b>j</b>ing <b>U</b>niversity versatile <b>Repo</b>rt.
+# What's NJUrepo
 
-NJUrepo是为南京大学本科生设计的一个免于配置的作业、实验报告模板。希望它可以使你
-的作业/实验报告不会因形式上的缺陷导致评分的下降。
+NJUrepo stands for **N**an**j**ing **U**niversity versatile **Repo**rt.
 
-# 使用方法
-下载后参考njurepo.pdf文档和example.pdf示例文档，以及main.tex和parts/examples/的示例代码进行使用。生成文件方法见Makefile的用法
+NJUrepo是为南京大学本科生设计的一个免于配置的作业、实验报告模板。希望它可以使你的作业/实验报告不会因形式上的缺陷导致评分的下降。
 
-# Makefile的用法
+该文档格式主要完成了除了主体内容以外的几乎**全部**工作。同时，通过使用 Github 版本宏包，你还可以更好的管理自己的 $\LaTeX$ 文档。
 
-```shell
-make [{all|thesis|shuji|doc|clean|cleanall|distclean}] \
-     [METHOD={latexmk|xelatex|pdflatex}]
+## 安装方法
+
+本宏包已被收纳于 CTAN 中，凡安装完整版 Texlive 用户可直接使用 `\usepackage{njurepo}`进行使用。若想获得最新版本的 NJUrepo 请前往github主页下载：https://github.com/zhengzangw/njurepo 
+
+## 演示文档与帮助文档
+
+* 问题求解作业 : ps
+* ML/ICS/OS/数据通信 作业 : dc
+* 数字电路/PA/OS Lab 实验报告 : ml
+* 数学/物理 课程论文 : math
+* 软件文档 : digital
+* 帮助文档 : `make texdoc` 或 `texdoc njurepo` 以获得
+
+## 使用方法
+
+从 Github 上下载后使用命令 `make cls` 获得 .cls 宏包。可以仿照现成的文件 （`python util.py -g essay -n examples` 生成）直接使用该宏包，或者可以使用以下推荐方法。
+
+Github 版本中同时包含了一个 Makefile 文件和 util.py 文件。这两个文件可以让你在一个文件夹内管理所有课程的作用和报告。具体方法为：
+
+### 生成学科项目
+
+parts 下每个文件夹代表着一个项目，每个项目由 cover.tex 配置文件和若干源文件组成。可以手动添加文件夹和配置文件，也可以使用命令 `python util.py -c project_name`
+
+生成完成后按提示配置 cover.tex。对于小作业而言，只需填需要的几个，其它全部留空即可
+
+### 选择格式
+
+Makefile 中内置了两个格式，可以通过 `python util.py -g single -n project-name -s one-single-file` 自动生成 single 格式，通过 `python util.py -g essay -n project-name` 自动生成 essay 格式
+
+single: 默认格式
+
+```tex
+\documentclass[language=english]{njurepo}
+\begin{document}
+\frontmatter
+\input{parts/math/cover}
+\mainmatter
+	\input{parts/math/one-single-file}
+\backmatter
+\end{document}
 ```
 
-## 目标
-* `make cls`       生成模板文件；
-* `make example`   生成实例 main.pdf；
-* `make doc`       生成使用说明书 njurepo.pdf；
-* `make clean`     删除示例文件的中间文件（不含 example.pdf）；
-* `make cleanall`  删除示例文件的中间文件和 example.pdf；
-* `make distclean` 删除示例文件和模板的所有中间文件和 PDF。
+essay: 报告/论文格式
+
+```tex
+\documentclass[language=english]{njurepo}
+\begin{document}
+\frontmatter
+\input{parts/examples/cover}
+	\input{parts/examples/abstract}
+	\maketitlepage % 封面
+	\makeabstract % 摘要
+	\tableofcontents % 目录
+	\input{parts/examples/denotation} % 中英对照表
+\mainmatter
+	\input{parts/examples/chap01} % 主体内容
+\backmatter
+	\listoffigures % 图索引
+	\listoftables % 表格索引
+	\listofequations % 公式索引
+	\bibliographystyle{ref/numeric} % 参考文献样式 ref/numeric,ref/author-year,plainnat,IEEEtran
+	\bibliography{ref/refs} % 参考文献
+	\include{parts/examples/ack} % 致谢
+	\begin{appendix} % 附录
+		\input{parts/examples/appendix01}
+	\end{appendix}
+\end{document}
+```
+
+### 生成文档
+
+Essay 模式可以先生成，适当更改后，使用 `make main TARGET=project-name` 或 `latexmk -xelatex main.tex` 来生成文档。
+
+Single 模式则在直接完成单个文件后，使用 `make TARGET=project-name MAIN=single-file-name` 来自动生成主文件并生成文档
+
+### 清理文件
+
+`make all` 将在完成后自动清理过程文件，只留下 `.tex` 和 `.pdf` 文件  
+`make distclean` 帮助删除主目录下所有 `.tex` 和 `.pdf` 文件
+
+## 选项
+
+* language: 目录(content)/章节(chapter)语言。无论选择哪个选择，中英均可输入。
+  * chinese
+  * english
+* open: 正规出版物的章节出现在奇数页，也就是右手边的页面。选择 `open=any` 时，如果前一章的最后一页也是奇数，那么模板会自动生成一个纯粹的空白页。
+  * any
+  * right
+
+## 默认加载的宏包
+
+| 宏包名 | 用途 |
+| -- | -- |
+| etoolbox | 开发使用 |
+| ifxetex | 开发使用 |
+| xparse | 开发使用 |
+| graphicx | 插入图片 |
+| subcaption | 图片排版 |
+| pdfpages | pdf 插入 |
+| tikz | tikz 绘图 |
+| dirtree | 绘制文件树 |
+| array | 数学环境表格 |
+| longtable | 表格支持 |
+| booktabs | 表格支持 |
+| multirow | 跨行 |
+| tabularx | 表格支持 |
+| diagbox | 斜线表格 |
+| makecell | 单元格布局 |
+| float | 表格位置 |
+| CJKfntef | 字体样式 |
+| amsmath | 数学支持 |
+| ntheorem | 数学定理 |
+| physics | 物理符号 |
+| stmaryrd | 更多数学符号 |
+| bbding | 符号 |
+| natbib | 参考文献 |
+| hyperref | 超链接 |
+
+### 默认加载的 tikz library
+
+* decorations
+* pathmorphing
+* graphs
+* calc
+
+## 自定义宏
+
+TBD
+
+## Contact
+
+如果你使用时发现任何 bug 或得不到的格式，可以联系我或开 issue  
+如果你有更好的作业/报告格式，欢迎添加或联系我帮忙添加  
+
+## License
+
+This file may be distributed and/or modified under the conditions of the LaTeX Project Public License, either version 1.3c of this license or (at your option) any later version. The latest version of this license is in: http://www.latex-project.org/lppl.txt and version 1.3c or later is part of all distributions of LaTeX version 2005/12/01 or later.
