@@ -33,7 +33,8 @@ install:
     booktabs caption diagbox enumitem eso-pic etoolbox filehook float footmisc
     fp multirow notoccite ntheorem pdfpages pict2e unicode-math xcolor zapfding
     fontaxes kastrup listings lm metalogo newpx newtx palatino pxfonts thumbpdf
-    txfonts xkeyval tcolorbox tikz
+    txfonts xkeyval tcolorbox
+  - tlmgr install tikz
 
 script:
   - make TARGET=ps MAIN=problemsolving

@@ -16,7 +16,7 @@
 %
 % \iffalse
 %<*driver>
-\ProvidesFile{njurepo.dtx}[2019/01/29 1.0.1 Nanjing University Report Template]
+\ProvidesFile{njurepo.dtx}[2019/01/29 1.1.2 Nanjing University Report Template]
 \documentclass{ltxdoc}
 \usepackage{dtx-style}
     \EnableCrossrefs
@@ -72,7 +72,8 @@
 % \changes{v1.0.0}{2019/01/22}{Initial version}
 % \changes{v1.0.1}{2019/01/29}{Add more ability}
 % \changes{v1.1.0}{2019/01/29}{Stable version}
-% \changes{v1.1.1}{2019/01/22}{Fix some typo and add more predined macro}
+% \changes{v1.1.1}{2019/01/22}{Fix little bugs}
+% \changes{v1.1.2}{2019/01/22}{Fix some typo and add more predined macro}
 %
 % \GetFileInfo{\jobname.dtx}
 %
@@ -311,7 +312,7 @@
 \hyphenation{NJU-repo}
 \def\njurepo{\textsc{NJU}\-\textsc{repo}}
 \def\thuthesis{\textsc{Thu}\-\textsc{Thesis}}
-\def\version{1.0.1}
+\def\version{1.1.2}
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{
     family=nju,
@@ -2070,7 +2071,7 @@ every listing line={\textcolor{red}{\small\ttfamily\bfseries \$>}}}
 %
 % \subsection{快速插入图片或图表}
 %    \begin{macrocode}
-\newcommand{\figpf}[2]{
+\newcommand{\figoptadd}[2]{
 	\begin{figure}[H]
 		\centering
 		\includegraphics[#1]{figs/#2}
@@ -2078,8 +2079,8 @@ every listing line={\textcolor{red}{\small\ttfamily\bfseries \$>}}}
 }
 
 %%%%%%%%%%%%%%%%%%%%
-\newcommand{\figpfc}[3]{
-	\begin{figure}[htbp]
+\newcommand{\figoptaddcap}[3]{
+	\begin{figure}[H]
 		\centering
 		\includegraphics[#1]{figs/#2}
 		\caption{#3}

@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/version-1.1.1-blue.svg)
+![Version](https://img.shields.io/badge/version-1.1.2-blue.svg)
 
 # What's NJUrepo
 
@@ -6,7 +6,7 @@ NJUrepo stands for **N**an**j**ing **U**niversity versatile **Repo**rt.
 
 NJUrepo是为南京大学本科生设计的一个免于配置的作业、实验报告模板。希望它可以使你的作业/实验报告不会因形式上的缺陷导致评分的下降。
 
-该文档格式主要完成了除了主体内容以外的几乎**全部**工作。同时，通过使用 Github 版本宏包，你还可以更好的管理自己的 $\LaTeX$ 文档。
+该文档格式基于 ctexbook, 主要完成了除了主体内容以外的几乎**全部**工作。同时，通过使用 Github 版本宏包，你还可以更好的管理自己的 $\LaTeX$ 文档。
 
 ## 安装方法
 
@@ -96,35 +96,53 @@ Single 模式则在直接完成单个文件后，使用 `make TARGET=project-nam
 * open: 正规出版物的章节出现在奇数页，也就是右手边的页面。选择 `open=any` 时，如果前一章的最后一页也是奇数，那么模板会自动生成一个纯粹的空白页。
   * any
   * right
+* draft: 生成 Draft 水印
 
 ## 默认加载的宏包
 
-| 宏包名 | 用途 |
-| -- | -- |
-| etoolbox | 开发使用 |
-| ifxetex | 开发使用 |
-| xparse | 开发使用 |
-| graphicx | 插入图片 |
-| subcaption | 图片排版 |
-| pdfpages | pdf 插入 |
-| tikz | tikz 绘图 |
-| dirtree | 绘制文件树 |
-| array | 数学环境表格 |
-| longtable | 表格支持 |
-| booktabs | 表格支持 |
-| multirow | 跨行 |
-| tabularx | 表格支持 |
-| diagbox | 斜线表格 |
-| makecell | 单元格布局 |
-| float | 表格位置 |
-| CJKfntef | 字体样式 |
-| amsmath | 数学支持 |
-| ntheorem | 数学定理 |
-| physics | 物理符号 |
-| stmaryrd | 更多数学符号 |
-| bbding | 符号 |
-| natbib | 参考文献 |
-| hyperref | 超链接 |
+模板自动引入以下宏包，对于宏包功能，可使用 `texdoc` 或 STFW 获得帮助。
+
+| 宏包名 | 用途 | 举例 |
+| -- | -- | -- |
+| etoolbox | 开发使用 ||
+| ifxetex | 开发使用 ||
+| xparse | 开发使用 ||
+| kvoptions | 开发使用 ||
+| ctexbook | 文档 ||
+| unicode-math | 数学字体 ||
+| xcolor | 颜色 ||
+| fancyhdr | 页眉页脚 ||
+| geometry | 页面设置 ||
+| enumitem | 调整列表 ||
+| environ | 定义环境 ||
+| natbib | 参考文献 ||
+| notoccite | 引用 ||
+| watermark | 水印 ||
+| hyperref | 超链接 ||
+| tcolorbox | 边框 ||
+| CJKfntef | 字体样式 | `\CJKunderdot{},\CJKunderline{}`|
+| amsmath | 数学支持 ||
+| ntheorem | 数学定理 ||
+| physics | 物理符号 | `\grad{}` |
+| stmaryrd | 更多数学符号 | `\trianglelefteqslant` |
+| bbding | 符号 | `\FiveFlowerPetal` |
+| graphicx | 插入图片 ||
+| subcaption | 图片排版 | `subfigure` 环境 |
+| pdfpages | pdf 插入 | `\includepdf{}`|
+| tikz | tikz 绘图 ||
+| dirtree | 绘制文件树 | `\dirtree{}`|
+| array | 数学模式表格支持 | `array` 环境 |
+| longtable | 表格支持 | `longtable` 环境 |
+| booktabs | 表格支持 | `\toprule,\middlerule,\bottomrule` |
+| multirow | 跨行 |`\multirow{2}{*}{content}`|
+| tabularx | 表格支持 | X 选项 |
+| diagbox | 斜线表格 | `\diagbox{}{}`|
+| makecell | 单元格布局 | `\thead{},\rothead{},\diagbox{}{}` |
+| float | 表格位置 | H 选项 |
+| listings | 代码 | `lstinputlisting{}` |
+| algorithm | 伪代码 | `algorithm` 环境 |
+| algpseudocode | 伪代码 | `algorithmic` 环境 |
+| verbatim | 无格式文本 | `verbatim` 环境 |
 
 ### 默认加载的 tikz library
 
@@ -135,7 +153,23 @@ Single 模式则在直接完成单个文件后，使用 `make TARGET=project-nam
 
 ## 自定义宏
 
-TBD
+* `\nchapter{}` 不带任何装饰的居中 chapter
+* `nproblem` 无标号问题环境（适用于作业不抄题目）
+* `nsolution` 无标号解答环境
+* `cproblem` 好看的问题环境
+* `csolution` 好看的解答环境
+* `\sihao,\xiaosi` 字体大小调整
+* `\songti,\heiti` 中文字体
+* `\magenta{}, \red{}` 字体颜色
+* 代码环境 `\begin{cplus} \end{cplus}`, 现支持：
+  * code, cpseudo, cplus, shell, commandshell, verilog, python, latex
+* `\blankpage` 空页
+* `\figoptadd{option}{address}` 原地插入(H)图片
+* `\figoptaddcap{option}{address}{caption}` 原地插入(H)图片
+* `\tabncc{number-of-columns}{content}{caption}` 制作简易 n 列居中表格
+* `\tabnc{number-of-columns}{content}` 制作简易 n 列居中表格
+* `\inlinecite{}` 行内引用
+* `\cite` 普通引用
 
 ## Contact
 
