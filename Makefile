@@ -25,7 +25,9 @@ else
 	OPEN = open
 endif
 
-.PHONY: all generate create main texdoc cls FORCE_MAKE clean distclean
+.PHONY: all generate create main texdoc cls FORCE_MAKE clean distclean cleanred single
+
+single: generate all
 
 all: cls main clean
 
@@ -62,13 +64,18 @@ else
 $(error Unknown METHOD: $(METHOD))
 endif
 
-clean:
+cleanred:
+	-@$(RM) *~
+	-@$(RM) .DS_Store
+	-@$(RM) parts/*/.DS_Store
+	-@$(RM) *.aux *.fdb_latexmk *.fls *.log *.out
+
+clean: cleanred
 	latexmk -c $(PACKAGE).dtx $(NAME) 
 	-@$(RM) parts/*.aux
 	-@$(RM) parts/$(PROJECT)/*.aux
-	-@$(RM) *~
 
-distclean:
+distclean: cleanred
 	-@$(RM) *.pdf *.tex
 	-@$(RM) $(CLSFILES)
 	-@$(RM) -r dist

@@ -43,5 +43,8 @@ if __name__=="__main__":
                     else:
                         with open(args.single+".tex", "w") as f:
                             f.write(HEADER.replace(EXAMPLE,args.name)+SINGLE.replace(EXAMPLE,args.name).replace("specialname", args.single)+FOOTER)
+                        tmp = "parts/"+args.name+"/"+args.single+".tex"
+                        if not os.path.exists(tmp):
+                            open(tmp, "w").close()
                 else:
                     print("Option Error!")

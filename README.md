@@ -154,6 +154,7 @@ essay: 报告/论文格式
 
 ## 自定义宏
 
+* `\maketitle` 生成作业抬头
 * `\nchapter{}` 不带任何装饰的居中 chapter
 * `nproblem` 无标号问题环境（适用于作业不抄题目）
 * `nsolution` 无标号解答环境

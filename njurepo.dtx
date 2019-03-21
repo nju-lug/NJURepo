@@ -16,7 +16,7 @@
 %
 % \iffalse
 %<*driver>
-\ProvidesFile{njurepo.dtx}[2019/01/29 1.1.2 Nanjing University Report Template]
+\ProvidesFile{njurepo.dtx}[2019/03/20 1.1.2 Nanjing University Report Template]
 \documentclass{ltxdoc}
 \usepackage{dtx-style}
     \EnableCrossrefs
@@ -988,12 +988,13 @@
 \RequirePackage[listings]{tcolorbox}
 \newtcolorbox{ps@problem}[1]{fonttitle=\bfseries,title=#1,before skip=0.5cm, after skip=-0.5cm}
 \newenvironment{cproblem}[1][]{
-    \begin{ps@problem}{\Checkmark\ \nju@problem@name\ #1}
+    \begin{ps@problem}{\Checkmark \ \nju@problem@name\ #1}
 }{
     \end{ps@problem}
 }
 \theoremstyle{plain}
-\newtheorem*{nproblem}{\Checkmark\nju@problem@name}[section]
+\newtheorem*{nproblem}{\Checkmark \nju@problem@name}[section]
+\newcommand{\pproblem}[1][1]{\begin{nproblem}[#1]\end{nproblem}}
 % \subsubsection{浮动对象}
 % \label{sec:float}
 % 设置浮动对象和文字之间的距离
