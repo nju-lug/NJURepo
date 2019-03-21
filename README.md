@@ -11,7 +11,15 @@ NJUrepo是为南京大学本科生设计的一个免于配置的作业、实验�
 
 ## 安装方法
 
-本宏包已被收纳于 [CTAN](https://ctan.org/pkg/njurepo) 中，凡安装完整版 Texlive 用户可直接使用 `\usepackage{njurepo}`进行使用。若想获得最新版本的 NJUrepo 请前往github主页下载：https://github.com/zhengzangw/njurepo 
+### CTAN
+
+本宏包已被收纳于 [CTAN](https://ctan.org/pkg/njurepo) 中，凡安装完整版 Texlive 用户可直接使用 `\usepackage{njurepo}`进行使用。
+
+>注意：由于当前 CTAN 库暂缓更新，默认获得的为 v1.1.0 不稳定版本。待 CTAN 库更新完毕后，更新本地库即可使用。目前建议使用 Github 版本
+
+### Github
+
+若想获得最新版本的 NJUrepo 请前往github主页下载：https://github.com/zhengzangw/njurepo 
 
 ## 演示文档与帮助文档
 
