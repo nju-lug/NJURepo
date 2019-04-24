@@ -1,4 +1,3 @@
-
 # Makefile for njurepo
 
 # Compiling method: xelatex
@@ -27,9 +26,9 @@ endif
 
 .PHONY: all generate create main texdoc cls FORCE_MAKE clean distclean cleanred single
 
-single: generate all
-
 all: cls main clean
+
+single: generate all
 
 cls: $(CLSFILES)
 

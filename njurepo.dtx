@@ -16,7 +16,7 @@
 %
 % \iffalse
 %<*driver>
-\ProvidesFile{njurepo.dtx}[2019/03/20 1.1.2 Nanjing University Report Template]
+\ProvidesFile{njurepo.dtx}[2019/03/20 1.1.3 Nanjing University Report Template]
 \documentclass{ltxdoc}
 \usepackage{dtx-style}
     \EnableCrossrefs
@@ -74,6 +74,7 @@
 % \changes{v1.1.0}{2019/01/29}{Stable version}
 % \changes{v1.1.1}{2019/02/20}{Fix little bugs}
 % \changes{v1.1.2}{2019/03/20}{Fix some typo and add more predined macro. Polish manual}
+% \changes{v1.1.3}{2019/04/24}{Fix some bugs and add three more packages}
 %
 % \GetFileInfo{\jobname.dtx}
 %
@@ -284,7 +285,7 @@
 % \njurepo 预设了如下的代码环境
 % \begin{longtable}{ccccc}
 % \toprule
-% code & cpseudo & cplus & shell & commandshell \\
+% code & cpseudo & cpp & shell & commandshell \\
 % verilog & python & latex & &\\  
 % \bottomrule
 % \end{longtable}
@@ -320,7 +321,7 @@
 \hyphenation{NJU-repo}
 \def\njurepo{\textsc{NJU}\-\textsc{repo}}
 \def\thuthesis{\textsc{Thu}\-\textsc{Thesis}}
-\def\version{1.1.2}
+\def\version{1.1.3}
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{
     family=nju,
@@ -366,18 +367,20 @@
 \RequirePackage{etoolbox}
 \RequirePackage{ifxetex}
 \RequirePackage{xparse}
+\RequirePackage{blindtext}
 %    \end{macrocode}
 % 用于图片的宏包
 %    \begin{macrocode}
 \RequirePackage{graphicx}
-\graphicspath{{resources/}}
 \graphicspath{{resources/logo/}}
+\graphicspath{{resources/}}
 \RequirePackage[labelformat=simple]{subcaption}
 \RequirePackage{pdfpages}
 \includepdfset{fitpaper=true}
 \RequirePackage{tikz}
 \usetikzlibrary{decorations.pathmorphing,graphs,calc}
 \RequirePackage{dirtree}
+\RequirePackage{qtree}
 %    \end{macrocode}
 % 用于表格的宏包
 %    \begin{macrocode}
@@ -396,7 +399,9 @@
 \RequirePackage{amsmath}
 \RequirePackage[amsmath, thmmarks, hyperref]{ntheorem}
 \RequirePackage{physics}
+\RequirePackage{latexsym}
 \RequirePackage{bbding,stmaryrd}
+\RequirePackage{siunitx}
 %\RequirePackage{fontawesome}
 %    \end{macrocode}
 % 其它宏包
@@ -421,7 +426,8 @@
   bookmarksopen=true,
   bookmarksopenlevel=1,
   breaklinks=true,
-  colorlinks=false,
+  colorlinks=true,
+  linkcolor=blue,
   plainpages=false,
   pdfborder=0 0 0}	
 \urlstyle{same}
@@ -982,7 +988,7 @@
 \fi
 \newcommand{\Hrule}{\noindent\rule{\linewidth}{0.5mm}}
 
-\theorempostwork{\vspace{-0.5cm}\Hrule}
+\theorempostwork{\Hrule}
 \newtheorem*{csolution}{\PencilRightDown\nju@solution@name}
 \newtheorem*{nsolution}{\PencilRightDown\nju@solution@name}
 \RequirePackage[listings]{tcolorbox}
@@ -1956,7 +1962,7 @@
 %    \begin{macrocode}
 \RequirePackage{verbatim}
 \RequirePackage{algorithm}
-\RequirePackage{algpseudocode}
+\RequirePackage[noend]{algpseudocode}
 \newcommand{\pseduo}[2]{
 \begin{algorithm}
 	\caption{\textsc{#1}}
@@ -2046,7 +2052,7 @@ every listing line={\textcolor{red}{\small\ttfamily\bfseries \$>}}}
   language=C
 }
 
-\lstdefinestyle{lstStylecplus}{%
+\lstdefinestyle{lstStylecpp}{%
   style=lstStyleBase,
   frame=l,
   rulecolor=\color{blue},
@@ -2071,7 +2077,7 @@ every listing line={\textcolor{red}{\small\ttfamily\bfseries \$>}}}
 \lstnewenvironment{latex}{\lstset{style=lstStyleLaTeX}}{}
 \lstnewenvironment{shell}{\lstset{style=lstStyleShell}}{}
 \lstnewenvironment{cdisplay}{\lstset{style=lstStylecdisplay}}{}
-\lstnewenvironment{cplus}{\lstset{style=lstStylecplus}}{}
+\lstnewenvironment{cpp}{\lstset{style=lstStylecpp}}{}
 \lstnewenvironment{verilog}{\lstset{style=lstStyleverilog}}{}
 \lstnewenvironment{python}{\lstset{style=lstStylepython}}{}
 \lstnewenvironment{cpseudo}{\lstset{style=lstStylecpseudo}}{}
@@ -2082,7 +2088,7 @@ every listing line={\textcolor{red}{\small\ttfamily\bfseries \$>}}}
 \newcommand{\figoptadd}[2]{
 	\begin{figure}[H]
 		\centering
-		\includegraphics[#1]{figs/#2}
+		\includegraphics[#1]{#2}
 	\end{figure}
 }
 
@@ -2090,7 +2096,7 @@ every listing line={\textcolor{red}{\small\ttfamily\bfseries \$>}}}
 \newcommand{\figoptaddcap}[3]{
 	\begin{figure}[H]
 		\centering
-		\includegraphics[#1]{figs/#2}
+		\includegraphics[#1]{#2}
 		\caption{#3}
 		\label{fig:#2}
 	\end{figure}
@@ -2304,7 +2310,7 @@ every listing line={\textcolor{red}{\small\ttfamily\bfseries \$>}}}
    frame=l,
    rulecolor=\color{violet},
    language=[LaTeX]TeX}
-\lstdefinestyle{lstStylecplus}{%
+\lstdefinestyle{lstStylecpp}{%
    style=lstStyleBase,
    frame=l,
    rulecolor=\color{blue},
@@ -2313,7 +2319,7 @@ every listing line={\textcolor{red}{\small\ttfamily\bfseries \$>}}}
 
 \lstnewenvironment{latex}{\lstset{style=lstStyleLaTeX}}{}
 \lstnewenvironment{shell}{\lstset{style=lstStyleShell}}{}
-\lstnewenvironment{cplus}{\lstset{style=lstStylecplus}}{}
+\lstnewenvironment{cpp}{\lstset{style=lstStylecpp}}{}
 
 \setlist{nosep}
 

@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/version-1.1.2-blue.svg)
+![Version](https://img.shields.io/badge/version-1.1.3-blue.svg)
 ![Status](https://travis-ci.org/zhengzangw/njurepo.svg?branch=master)
 
 # What's NJUrepo
@@ -152,6 +152,9 @@ essay: 报告/论文格式
 | algpseudocode | 伪代码 | `algorithmic` 环境 |
 | verbatim | 无格式文本 | `verbatim` 环境 |
 | fontawesome | 字体 | You need to include this by yourself if you want|
+| qtree | 绘制树 | |
+| latexsym | | |
+| siunitx | 单位 | |
 
 ### 默认加载的 tikz library
 
