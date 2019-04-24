@@ -115,6 +115,7 @@ essay: 报告/论文格式
 | etoolbox | 开发使用 ||
 | ifxetex | 开发使用 ||
 | xparse | 开发使用 ||
+| blindtext | 开发使用 ||
 | kvoptions | 开发使用 ||
 | ctexbook | 文档 ||
 | unicode-math | 数学字体 ||
