@@ -1,0 +1,22 @@
+\documentclass[language=english]{njurepo}
+\begin{document}
+\frontmatter
+\input{chapter/cover}
+	\input{chapter/abstract}
+	\maketitlepage % 封面
+	\makeabstract % 摘要
+	\tableofcontents % 目录
+	\input{chapter/denotation} % 中英对照表
+\mainmatter
+	\input{chapter/chap01} % 主体内容
+\backmatter
+	\listoffigures % 图索引
+	\listoftables % 表格索引
+	\listofequations % 公式索引
+	\bibliographystyle{chapter/numeric} % 参考文献样式 ref/numeric,ref/author-year,plainnat,IEEEtran
+	\bibliography{chapter/refs} % 参考文献
+	\include{chapter/ack} % 致谢
+	\begin{appendix} % 附录
+		\input{chapter/appendix01}
+	\end{appendix}
+\end{document}

@@ -16,6 +16,53 @@
 %
 % \iffalse
 %<*driver>
+%
+%<*batchfile>
+\input docstrip
+\keepsilent
+
+\usedir{tex/latex/njurepo}
+
+\preamble
+
+This is a generated file.
+
+Copyright (C) 2019 by Zangwei Zheng <zhengzangw@gmail.com>
+
+This file may be distributed and/or modified under the
+conditions of the LaTeX Project Public License, either version 1.3c
+of this license or (at your option) any later version.
+The latest version of this license is in:
+  http://www.latex-project.org/lppl.txt
+and version 1.3c or later is part of all distributions of LaTeX
+version 2005/12/01 or later.
+
+\endpreamble
+\askforoverwritefalse
+\generate{\file{\jobname.cls}{\from{\jobname.dtx}{cls}}
+          \file{dtx-style.sty}{\from{\jobname.dtx}{dtx-style}}
+  }
+
+\obeyspaces
+\Msg{*************************************************************}
+\Msg{*                                                           *}
+\Msg{* To finish the installation you have to move the following *}
+\Msg{* files into a directory searched by TeX:                   *}
+\Msg{*                                                           *}
+\Msg{*     njurepo.cls                                           *}
+\Msg{*     njurepo.cfg                                           *}
+\Msg{*                                                           *}
+\Msg{* To produce the documentation run the file njurepo.dtx     *}
+\Msg{* through LaTeX.                                            *}
+\Msg{*                                                           *}
+\Msg{* Happy TeXing!                                             *}
+\Msg{*                                                           *}
+\Msg{*************************************************************}
+
+\endbatchfile
+
+%</batchfile>
+%
 \ProvidesFile{njurepo.dtx}[2019/03/20 1.1.3 Nanjing University Report Template]
 \documentclass{ltxdoc}
 \usepackage{dtx-style}
@@ -101,7 +148,7 @@
 % \item 本模板的发布遵守 \LaTeX\ Project Public License，使用前请认真阅读协议内
 %   容。
 % \item \textbf{本模板为作者自己通常使用的报告模板，与南京大学官方没有任何关系}。任何使用该宏包进行实验报告制作时，请\textbf{务必根据课程要求进行写作}。由于使用本模板而引起的作业验收问题，均与本模板作者无关。
-% \item 本模板借鉴\thuthesis{}宏包的许多内容，需要稳定模板的同学也可以选择使用清华大学的\thuthesis{}宏包并自己进行配置。
+% \item 本模板借鉴\njuthesis{}宏包的许多内容，需要稳定模板的同学也可以选择使用南京大学的\njuthesis{}宏包并自己进行配置。
 % \item 任何个人或组织以本模板为基础进行修改、扩展而生成的新的专用模板，请严格遵
 %   守 \LaTeX\ Project Public License 协议。由于违犯协议而引起的任何纠纷争端均与
 %   本模板作者无关。
@@ -301,7 +348,7 @@
 % \section{致谢}
 % 感谢以下宏包的作者，本宏包从中使用了部分代码和借鉴：
 % \begin{itemize}
-%  \item 清华大学\thuthesis https://github.com/xueruini/thuthesis
+%  \item 南京大学\njuthesis https://github.com/xueruini/njuthesis
 % \end{itemize}
 % 
 % \StopEventually{}
@@ -320,7 +367,7 @@
 %    \begin{macrocode}
 \hyphenation{NJU-repo}
 \def\njurepo{\textsc{NJU}\-\textsc{repo}}
-\def\thuthesis{\textsc{Thu}\-\textsc{Thesis}}
+\def\njuthesis{\textsc{Thu}\-\textsc{Thesis}}
 \def\version{1.1.3}
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{
@@ -379,6 +426,7 @@
 \includepdfset{fitpaper=true}
 \RequirePackage{tikz}
 \usetikzlibrary{decorations.pathmorphing,graphs,calc}
+\RequirePackage{njuvisual}
 \RequirePackage{dirtree}
 \RequirePackage{qtree}
 %    \end{macrocode}
@@ -449,7 +497,7 @@
 %    \end{macrocode}
 %
 % \subsection{页面设置}
-% 使用了thuthesis的非本科生默认配置。
+% 使用了njuthesis的非本科生默认配置。
 %    \begin{macrocode}
 \RequirePackage{geometry}
 \ifnju@wide 
@@ -570,15 +618,10 @@
   \IfFontExistsTF{XITSMath-Regular.otf}{
     \setmathfont[range={\partial,\lbrace,\rbrace}]{XITSMath-Regular.otf}
   }{
-    \setmathfont[range={\partial,\lbrace,\rbrace}]{xits-math.otf}
+    \setmathfont[range={\partial,\lbrace,\rbrace}]{XITS Math}
   }
 }{
-  \setmathfont[
-    Extension    = .otf,
-    BoldFont     = *bold,
-    StylisticSet = 8,
-  ]{xits-math}
-  \setmathfont[range={cal,bfcal},StylisticSet=1]{xits-math.otf}
+  \setmathfont{XITS Math}
 }
 %    \end{macrocode}
 %
@@ -2335,7 +2378,7 @@ every listing line={\textcolor{red}{\small\ttfamily\bfseries \$>}}}
   \color{magenta}{\bfseries #1}\emph{#2}}}
 
 \def\njurepo{\textsc{NJU}\-\textsc{repo}}
-\def\thuthesis{\textsc{Thu}\-\textsc{Thesis}}
+\def\njuthesis{\textsc{NJU}\-\textsc{Thesis}}
 %</dtx-style>
 %    \end{macrocode}
 % \fi
